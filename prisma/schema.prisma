@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Bloger {
+  id       Int    @id @default(autoincrement())
+  name     String
+  email    String
+  password String
+  img      String
+
+  blogs     Blog[]
+  Following Follow[] @relation(name: "FollowedBy")
+  Followers Follow[] @relation(name: "Follows")
+  
+  save   save[]
+  
+
+
+}
+
+model save{
+  id Int @id @default(autoincrement())
+  blog Blog[]
+  author Bloger[]
+}
+model Follow {
+  id       Int    @id @default(autoincrement())
+  Follwing Bloger @relation(name: "FollowedBy", fields: [follow], references: [id],onDelete: Cascade)
+
+  follow   Int
+  
+  Follwers Bloger @relation(name: "Follows", fields: [follower], references: [id],onDelete: Cascade)
+  follower  Int
+
+  @@unique([follow, follower])
+}
+
+
+model Blog {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  authore   Bloger   @relation(fields: [authoreId], references: [id],onDelete: Cascade)
+  save   save   @relation(fields: [saveId], references: [id],onDelete: Cascade)
+  saveId Int
+  authoreId Int
+  avtar     String
+  created   DateTime @default(now())
+}
+
+
