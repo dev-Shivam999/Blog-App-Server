@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,50 +9,56 @@ datasource db {
 }
 
 model Bloger {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String
-  password String
-  img      String
-
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  password  String
+  img       String
   blogs     Blog[]
-  Following Follow[] @relation(name: "FollowedBy")
-  Followers Follow[] @relation(name: "Follows")
-  
-  save   save[]
-  
-
-
+  Following Follow[] @relation("FollowedBy")
+  Followers Follow[] @relation("Follows")
+  Likes     Like[]
+  Save      Save[]
 }
 
-model save{
-  id Int @id @default(autoincrement())
-  blog Blog[]
-  author Bloger[]
-}
 model Follow {
   id       Int    @id @default(autoincrement())
-  Follwing Bloger @relation(name: "FollowedBy", fields: [follow], references: [id],onDelete: Cascade)
-
   follow   Int
-  
-  Follwers Bloger @relation(name: "Follows", fields: [follower], references: [id],onDelete: Cascade)
-  follower  Int
+  follower Int
+  Follwing Bloger @relation("FollowedBy", fields: [follow], references: [id], onDelete: Cascade)
+  Follwers Bloger @relation("Follows", fields: [follower], references: [id], onDelete: Cascade)
 
   @@unique([follow, follower])
 }
+
+model Save {
+  id       Int    @id @default(autoincrement())
+  blogId   String
+  blogerId Int
+  blog     Blog   @relation(fields: [blogId], references: [id])
+  bloger   Bloger @relation(fields: [blogerId], references: [id])
+}
+
+model Like {
+  id       Int    @id @default(autoincrement())
+  blog     Blog   @relation(fields: [blogId], references: [id])
+  blogId   String
+  bloger   Bloger @relation(fields: [blogerId], references: [id])
+  blogerId Int
+}
+
 
 
 model Blog {
   id        String   @id @default(uuid())
   title     String
   content   String
-  authore   Bloger   @relation(fields: [authoreId], references: [id],onDelete: Cascade)
-  save   save   @relation(fields: [saveId], references: [id],onDelete: Cascade)
-  saveId Int
   authoreId Int
   avtar     String
   created   DateTime @default(now())
+  authore   Bloger   @relation(fields: [authoreId], references: [id], onDelete: Cascade)
+  Link      Like[]
+  saves     Save[]
 }
 
 

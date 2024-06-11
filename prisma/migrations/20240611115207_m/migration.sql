@@ -19,6 +19,31 @@ CREATE TABLE "Follow" (
 );
 
 -- CreateTable
+CREATE TABLE "Save" (
+    "id" SERIAL NOT NULL,
+    "blogId" TEXT NOT NULL,
+    "blogerId" INTEGER NOT NULL,
+
+    CONSTRAINT "Save_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Like" (
+    "id" SERIAL NOT NULL,
+    "blogId" TEXT NOT NULL,
+    "blogerId" INTEGER NOT NULL,
+
+    CONSTRAINT "Like_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Loveer" (
+    "id" SERIAL NOT NULL,
+
+    CONSTRAINT "Loveer_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Blog" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -38,6 +63,18 @@ ALTER TABLE "Follow" ADD CONSTRAINT "Follow_follow_fkey" FOREIGN KEY ("follow") 
 
 -- AddForeignKey
 ALTER TABLE "Follow" ADD CONSTRAINT "Follow_follower_fkey" FOREIGN KEY ("follower") REFERENCES "Bloger"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Save" ADD CONSTRAINT "Save_blogId_fkey" FOREIGN KEY ("blogId") REFERENCES "Blog"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Save" ADD CONSTRAINT "Save_blogerId_fkey" FOREIGN KEY ("blogerId") REFERENCES "Bloger"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_blogId_fkey" FOREIGN KEY ("blogId") REFERENCES "Blog"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_blogerId_fkey" FOREIGN KEY ("blogerId") REFERENCES "Bloger"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Blog" ADD CONSTRAINT "Blog_authoreId_fkey" FOREIGN KEY ("authoreId") REFERENCES "Bloger"("id") ON DELETE CASCADE ON UPDATE CASCADE;

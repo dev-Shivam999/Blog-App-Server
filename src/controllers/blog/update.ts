@@ -1,5 +1,4 @@
 import { Request, Response } from "express"
-import { Post2 } from "../../utils/types/types"
 import { client } from "../.."
 
 export const update = async (req: Request, res: Response) => {

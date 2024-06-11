@@ -30,7 +30,21 @@ export const Profile = async (req: Request, res: Response) => {
                     id: true,
                     name: true,
                     img: true,
-                    blogs: true,
+                    blogs: {
+                        select:{
+                            authoreId:true,
+                            avtar:true,
+                            content:true,
+                            title:true,
+                            created:true,
+                            id:true,
+                             Link:{
+                                select:{
+                                    blogId:true,
+                                }
+                             }
+                        }
+                    },
                     Followers: {
                         select: {
                             follow: true
@@ -40,7 +54,8 @@ export const Profile = async (req: Request, res: Response) => {
                         select: {
                             follow: true
                         }
-                    }
+                    },
+                   
 }
 
             })

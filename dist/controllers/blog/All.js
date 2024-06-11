@@ -33,8 +33,16 @@ const All = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 id: true,
                 authore: {
                     select: {
-                        name: true, img: true
+                        name: true, img: true,
                     }
+                }, Link: {
+                    select: {
+                        blogerId: true,
+                    }
+                }
+            }, orderBy: {
+                Link: {
+                    _count: "desc"
                 }
             }
         });
@@ -42,6 +50,7 @@ const All = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.log(error);
+        return res.json({ success: false });
     }
 });
 exports.All = All;

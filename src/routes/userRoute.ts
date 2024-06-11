@@ -11,6 +11,7 @@ import { client } from '..';
 import { upload } from '../utils/multer/multer';
 import { Follow } from '../controllers/user/Follow';
 import { BlogDelete } from '../controllers/blog/BlogDelete';
+import { LikeCount } from '../controllers/blog/Like';
 
 export const routes:Router=express.Router()
 
@@ -42,3 +43,4 @@ routes.put('/update/:id', update)
 routes.post('/profile',Profile)
 routes.post('/follow',Follow)
 routes.post('/BlogDelete', BlogDelete)
+routes.post('/Link', LikeCount)
