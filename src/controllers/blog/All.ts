@@ -20,6 +20,9 @@ export const All = async (req: Request, res: Response) => {
         img: true
       }
     })
+  if (!vali) {
+    return res.json({success: false})
+  }
     const blog = await client.blog.findMany({
       select: {
         avtar: true,
@@ -30,18 +33,20 @@ export const All = async (req: Request, res: Response) => {
         authore: {
           select: {
             name: true, img: true,
+            id: true
 
           }
-        }, Link: {
+        }, Likes: {
+          
           select: {
             blogerId: true,
           }
         }
 
       }, orderBy: {
-       Link:{
-        _count:"desc"
-       }
+        Likes:{
+          _count:"desc"
+        }
 
       }
     })

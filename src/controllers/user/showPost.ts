@@ -26,6 +26,9 @@ export const showPost = async (req: Request, res: Response) => {
     })
 
     
+    if (!posts) {
+        return res.json({success: false})
+    }
     return res.json({ success: true, data: posts })
 
 

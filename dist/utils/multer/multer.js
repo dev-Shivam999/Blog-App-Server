@@ -9,7 +9,7 @@ const path_1 = __importDefault(require("path"));
 const storage = multer_1.default.diskStorage({
     destination: path_1.default.join(__dirname, '../../uploads'),
     filename: (req, file, cb) => {
-        cb(null, `${file.originalname}`);
+        cb(null, `${Date.now() + file.originalname}`);
     }
 });
 exports.upload = (0, multer_1.default)({ storage: storage });

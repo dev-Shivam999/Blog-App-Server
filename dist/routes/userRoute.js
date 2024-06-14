@@ -26,6 +26,7 @@ const multer_1 = require("../utils/multer/multer");
 const Follow_1 = require("../controllers/user/Follow");
 const BlogDelete_1 = require("../controllers/blog/BlogDelete");
 const Like_1 = require("../controllers/blog/Like");
+const EditsProfile_1 = require("../controllers/user/EditsProfile");
 exports.routes = express_1.default.Router();
 exports.routes.post('/All', All_1.All);
 exports.routes.post('/signup', multer_1.upload.single("file"), sign_1.SignIn);
@@ -38,6 +39,7 @@ exports.routes.get('/AllUser', (req, res) => __awaiter(void 0, void 0, void 0, f
 }));
 exports.routes.put('/update/:id', update_1.update);
 exports.routes.post('/profile', Profile_1.Profile);
+exports.routes.post('/EditsProfile', multer_1.upload.single("file"), EditsProfile_1.EditsProfile);
 exports.routes.post('/follow', Follow_1.Follow);
 exports.routes.post('/BlogDelete', BlogDelete_1.BlogDelete);
 exports.routes.post('/Link', Like_1.LikeCount);

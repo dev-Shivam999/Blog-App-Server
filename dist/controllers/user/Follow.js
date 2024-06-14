@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Follow = void 0;
 const __1 = require("../..");
 const Follow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const val = req.header("Authorization"); // bloggerId
-    const auth = req.header("Lol"); // userId
+    const val = req.header("Authorization");
+    const auth = req.header("Lol");
     const isFollowing = yield __1.client.follow.findFirst({
         where: {
             follow: Number(auth),
@@ -22,7 +22,6 @@ const Follow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
     try {
         if (!isFollowing) {
-            // Create a new follow relationship from user to blogger
             yield __1.client.follow.create({
                 data: {
                     follow: Number(auth),
@@ -32,7 +31,6 @@ const Follow = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.json({ success: true, message: "Followed successfully" });
         }
         else {
-            // Remove the follow relationship from user to blogger
             yield __1.client.follow.deleteMany({
                 where: {
                     follow: Number(auth),

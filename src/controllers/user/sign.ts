@@ -34,6 +34,7 @@ export const SignIn = async (req: Request<{}, {}, data>, res: Response) => {
                 img: `/uploads/${req.file.filename}`,
                 password: body.password
 
+                
             }, select: {
                 id: true,
             }

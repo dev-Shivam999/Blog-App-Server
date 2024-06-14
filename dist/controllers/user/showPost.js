@@ -30,6 +30,9 @@ const showPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
         }
     });
+    if (!posts) {
+        return res.json({ success: false });
+    }
     return res.json({ success: true, data: posts });
 });
 exports.showPost = showPost;

@@ -13,10 +13,9 @@ exports.BlogDelete = void 0;
 const __1 = require("../..");
 const BlogDelete = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.body;
-    console.log(id);
     const user = req.header("authorization");
     try {
-        const data = yield __1.client.blog.delete({
+        yield __1.client.blog.delete({
             where: {
                 authoreId: Number(user),
                 id: id.e

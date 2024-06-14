@@ -57,7 +57,7 @@ model Blog {
   avtar     String
   created   DateTime @default(now())
   authore   Bloger   @relation(fields: [authoreId], references: [id], onDelete: Cascade)
-  Link      Like[]
+  Likes      Like[]
   saves     Save[]
 }
 

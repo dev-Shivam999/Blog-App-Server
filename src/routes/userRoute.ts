@@ -12,6 +12,7 @@ import { upload } from '../utils/multer/multer';
 import { Follow } from '../controllers/user/Follow';
 import { BlogDelete } from '../controllers/blog/BlogDelete';
 import { LikeCount } from '../controllers/blog/Like';
+import { EditsProfile } from '../controllers/user/EditsProfile';
 
 export const routes:Router=express.Router()
 
@@ -41,6 +42,7 @@ routes.get('/AllUser',async(req:Request,res:Response)=>{
 routes.put('/update/:id', update)
 
 routes.post('/profile',Profile)
+routes.post('/EditsProfile', upload.single("file"), EditsProfile)
 routes.post('/follow',Follow)
 routes.post('/BlogDelete', BlogDelete)
 routes.post('/Link', LikeCount)

@@ -37,13 +37,6 @@ CREATE TABLE "Like" (
 );
 
 -- CreateTable
-CREATE TABLE "Loveer" (
-    "id" SERIAL NOT NULL,
-
-    CONSTRAINT "Loveer_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Blog" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,

@@ -14,42 +14,48 @@ const __1 = require("../..");
 const LikeCount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.body;
     const userId = req.header('authorization');
-    if (!userId) {
-        return res.json({ success: false, message: false });
-    }
-    const user = yield __1.client.bloger.findFirst({
-        where: {
-            id: Number(userId),
-        }, select: {
-            Likes: true
+    try {
+        if (!userId) {
+            return res.json({ success: false, message: false });
         }
-    });
-    if (!user) {
-        return res.json({ success: false, message: false });
-    }
-    const cl = yield __1.client.like.findFirst({
-        where: {
-            blogerId: Number(userId),
-            blogId: id.id
+        const user = yield __1.client.bloger.findFirst({
+            where: {
+                id: Number(userId),
+            }, select: {
+                Likes: true
+            }
+        });
+        if (!user) {
+            return res.json({ success: false, message: false });
         }
-    });
-    if (cl) {
-        yield __1.client.like.deleteMany({
+        const cl = yield __1.client.like.findFirst({
             where: {
                 blogerId: Number(userId),
-                blogId: id.id
+                blogId: String(id.id)
             }
         });
-        return res.json({ success: false, message: true });
+        if (cl) {
+            yield __1.client.like.deleteMany({
+                where: {
+                    blogerId: Number(userId),
+                    blogId: String(id.id)
+                }
+            });
+            return res.json({ success: false, message: true });
+        }
+        else {
+            yield __1.client.like.create({
+                data: {
+                    blogerId: Number(userId),
+                    blogId: id.id,
+                }
+            });
+            return res.json({ success: true, message: true });
+        }
     }
-    else {
-        yield __1.client.like.create({
-            data: {
-                blogerId: Number(userId),
-                blogId: id.id,
-            }
-        });
-        return res.json({ success: true, message: true });
+    catch (error) {
+        console.log(error);
+        return res.json({ error: false });
     }
 });
 exports.LikeCount = LikeCount;

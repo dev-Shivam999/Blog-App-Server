@@ -10,6 +10,25 @@ export const Profile = async (req: Request, res: Response) => {
 
 
     try {
+        if (location =="/Edits") {
+            const user = await client.bloger.findFirst({
+                where: {
+                    id: Number(val)
+                },
+                select: {
+                  
+                    name: true,
+                    img: true,
+                  
+
+                }
+
+            })
+            return res.json({ success: true, message:  user})
+
+        } 
+     
+        
         if (auth == undefined) {
             return res.json({ success: false, message: "login plz" })
         }
@@ -31,18 +50,19 @@ export const Profile = async (req: Request, res: Response) => {
                     name: true,
                     img: true,
                     blogs: {
-                        select:{
-                            authoreId:true,
-                            avtar:true,
-                            content:true,
-                            title:true,
-                            created:true,
-                            id:true,
-                             Link:{
-                                select:{
-                                    blogId:true,
+                        select: {
+                            authoreId: true,
+                            avtar: true,
+                            content: true,
+                            title: true,
+                            created: true,
+                            id: true,
+
+                            Likes: {
+                                select: {
+                                    blogerId: true,
                                 }
-                             }
+                            }
                         }
                     },
                     Followers: {
@@ -55,22 +75,22 @@ export const Profile = async (req: Request, res: Response) => {
                             follow: true
                         }
                     },
-                   
-}
+
+                }
 
             })
 
 
 
             if (!user) {
-                return res.json({ success: false, message: "login plz" })
+                return res.json({ success: false, message: "Not found" })
 
             }
             const data = user.Followers.some(p => p.follow == Number(val))
-     
-            res.json({ success: true, message: { user, data },   })
-            
-        }else{
+
+            res.json({ success: true, message: { user, data }, })
+
+        } else {
             const user = await client.bloger.findFirst({
                 where: {
                     id: Number(val)
@@ -84,9 +104,14 @@ export const Profile = async (req: Request, res: Response) => {
                             follow: true
                         }
                     },
+                    Likes: {
+                        select: {
+                            blogerId: true
+                        }
+                    },
                     Following: {
-                        select:{
-                            follower:true
+                        select: {
+                            follower: true
                         }
                     }
 
@@ -98,7 +123,7 @@ export const Profile = async (req: Request, res: Response) => {
 
             }
 
-            res.json({ success: true, message: {user} })
+            res.json({ success: true, message: { user } })
         }
 
     } catch (error) {

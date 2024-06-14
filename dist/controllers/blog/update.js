@@ -14,7 +14,6 @@ const __1 = require("../..");
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { Post } = req.body;
     const { id } = req.params;
-    console.log(id);
     try {
         const up = yield __1.client.blog.update({
             where: { id: id, authoreId: Number(Post.authorId) },

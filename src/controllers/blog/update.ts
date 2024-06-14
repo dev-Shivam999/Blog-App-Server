@@ -4,7 +4,6 @@ import { client } from "../.."
 export const update = async (req: Request, res: Response) => {
     const { Post } = req.body
     const { id } = req.params
-    console.log(id);
     
  try {
      const up = await client.blog.update({

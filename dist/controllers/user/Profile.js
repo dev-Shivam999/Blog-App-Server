@@ -16,6 +16,18 @@ const Profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const auth = req.header("Lol");
     const location = req.header("Location");
     try {
+        if (location == "/Edits") {
+            const user = yield __1.client.bloger.findFirst({
+                where: {
+                    id: Number(val)
+                },
+                select: {
+                    name: true,
+                    img: true,
+                }
+            });
+            return res.json({ success: true, message: user });
+        }
         if (auth == undefined) {
             return res.json({ success: false, message: "login plz" });
         }
@@ -39,9 +51,9 @@ const Profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             title: true,
                             created: true,
                             id: true,
-                            Link: {
+                            Likes: {
                                 select: {
-                                    blogId: true,
+                                    blogerId: true,
                                 }
                             }
                         }
@@ -59,7 +71,7 @@ const Profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 }
             });
             if (!user) {
-                return res.json({ success: false, message: "login plz" });
+                return res.json({ success: false, message: "Not found" });
             }
             const data = user.Followers.some(p => p.follow == Number(val));
             res.json({ success: true, message: { user, data }, });
@@ -76,6 +88,11 @@ const Profile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     Followers: {
                         select: {
                             follow: true
+                        }
+                    },
+                    Likes: {
+                        select: {
+                            blogerId: true
                         }
                     },
                     Following: {

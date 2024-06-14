@@ -24,6 +24,9 @@ const All = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 img: true
             }
         });
+        if (!vali) {
+            return res.json({ success: false });
+        }
         const blog = yield __1.client.blog.findMany({
             select: {
                 avtar: true,
@@ -34,14 +37,15 @@ const All = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 authore: {
                     select: {
                         name: true, img: true,
+                        id: true
                     }
-                }, Link: {
+                }, Likes: {
                     select: {
                         blogerId: true,
                     }
                 }
             }, orderBy: {
-                Link: {
+                Likes: {
                     _count: "desc"
                 }
             }
