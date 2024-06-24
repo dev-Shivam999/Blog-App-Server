@@ -7,7 +7,6 @@ export const All = async (req: Request, res: Response) => {
 
 
 
-
   try {
     if (!id) {
 
