@@ -3,7 +3,7 @@ import cors from 'cors';
 import {  PrismaClient } from "@prisma/client"
 import { routes } from './routes/userRoute';
 import path from 'path';
-
+import * as dotenv from 'dotenv'
 
 export const client = new PrismaClient()
 const app: Express = express();
@@ -17,6 +17,7 @@ app.use('/user',routes)
 
 
 
+dotenv.config() // Load the environment variables
 
 
 
