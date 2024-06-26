@@ -15,6 +15,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.2",
+    "express": "^4.19.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
@@ -22,7 +23,6 @@
     "@prisma/extension-accelerate": "^1.1.0",
     "@types/multer": "^1.4.11",
     "cors": "^2.8.5",
-    "express": "^4.19.2",
     "multer": "^1.4.5-lts.1",
     "prisma": "^5.16.0"
   }
