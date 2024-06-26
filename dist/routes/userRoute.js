@@ -34,8 +34,15 @@ exports.routes.post('/post', multer_1.upload.single("file"), Post_1.PostCreate);
 exports.routes.post('/sign', signUp_1.Sign);
 exports.routes.put('/result/:id', showPost_1.showPost);
 exports.routes.get('/AllUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield __1.client.bloger.findMany();
-    res.json({ data });
+    const data = yield __1.client.bloger.findMany({
+        where: {
+            id: 1
+        },
+        select: {
+            blogs: true
+        }
+    });
+    res.json({ data: data ? data : "lol" });
 }));
 exports.routes.put('/update/:id', update_1.update);
 exports.routes.post('/profile', Profile_1.Profile);

@@ -35,8 +35,15 @@ routes.put('/result/:id', showPost)
 
 routes.get('/AllUser',async(req:Request,res:Response)=>{
 
-    const data=await client.bloger.findMany()
-    res.json({data})
+    const data=await client.bloger.findMany({
+        where:{
+            id:1
+        },
+        select:{
+            blogs:true
+        }
+    })
+    res.json({data:data?data:"lol"})
 })
 
 routes.put('/update/:id', update)
