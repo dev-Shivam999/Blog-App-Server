@@ -31,13 +31,12 @@ var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 var client_1 = require("@prisma/client");
 var userRoute_1 = require("./routes/userRoute");
-var path_1 = __importDefault(require("path"));
 var dotenv = __importStar(require("dotenv"));
 exports.client = new client_1.PrismaClient();
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, './uploads')));
+app.use('/uploads', express_1.default.static('./uploads/'));
 app.use('/user', userRoute_1.routes);
 dotenv.config(); // Load the environment variables
 app.listen(3000, function () {
