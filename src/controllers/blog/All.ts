@@ -10,7 +10,7 @@ export const All = async (req: Request, res: Response) => {
   try {
     if (!id) {
 
-      id = "0"
+      return res.json({ success: false })
     }
     const vali = await client.bloger.findUnique({
       where: {
