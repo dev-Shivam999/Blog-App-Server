@@ -48,7 +48,7 @@ var All = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
             case 1:
                 _a.trys.push([1, 4, , 5]);
                 if (!id) {
-                    id = "0";
+                    return [2 /*return*/, res.json({ success: false })];
                 }
                 return [4 /*yield*/, __1.client.bloger.findUnique({
                         where: {
