@@ -39,50 +39,63 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Follow = void 0;
 var __1 = require("../..");
 var Follow = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var val, auth, isFollowing, error_1;
+    var val, auth, u, isFollowing, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 val = req.header("Authorization");
                 auth = req.header("Lol");
+                if (!auth) {
+                    return [2 /*return*/, res.json({ success: false, message: "login plz" })];
+                }
+                return [4 /*yield*/, __1.client.bloger.findUnique({
+                        where: {
+                            id: Number(auth)
+                        }
+                    })];
+            case 1:
+                u = _a.sent();
+                if (u == null) {
+                    return [2 /*return*/, res.json({ success: false, message: "login plz" })];
+                }
                 return [4 /*yield*/, __1.client.follow.findFirst({
                         where: {
                             follow: Number(auth),
                             follower: Number(val)
                         },
                     })];
-            case 1:
-                isFollowing = _a.sent();
-                _a.label = 2;
             case 2:
-                _a.trys.push([2, 7, , 8]);
-                if (!!isFollowing) return [3 /*break*/, 4];
+                isFollowing = _a.sent();
+                _a.label = 3;
+            case 3:
+                _a.trys.push([3, 8, , 9]);
+                if (!!isFollowing) return [3 /*break*/, 5];
                 return [4 /*yield*/, __1.client.follow.create({
                         data: {
                             follow: Number(auth),
                             follower: Number(val)
                         },
                     })];
-            case 3:
+            case 4:
                 _a.sent();
                 res.json({ success: true, message: "Followed successfully" });
-                return [3 /*break*/, 6];
-            case 4: return [4 /*yield*/, __1.client.follow.deleteMany({
+                return [3 /*break*/, 7];
+            case 5: return [4 /*yield*/, __1.client.follow.deleteMany({
                     where: {
                         follow: Number(auth),
                         follower: Number(val),
                     },
                 })];
-            case 5:
+            case 6:
                 _a.sent();
                 res.json({ success: true, message: "Unfollowed successfully" });
-                _a.label = 6;
-            case 6: return [3 /*break*/, 8];
-            case 7:
+                _a.label = 7;
+            case 7: return [3 /*break*/, 9];
+            case 8:
                 error_1 = _a.sent();
                 console.log(error_1);
                 return [2 /*return*/, res.json({ success: false })];
-            case 8: return [2 /*return*/];
+            case 9: return [2 /*return*/];
         }
     });
 }); };

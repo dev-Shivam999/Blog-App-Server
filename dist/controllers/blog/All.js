@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.All = void 0;
 var __1 = require("../..");
 var All = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, vali, blog, error_1;
+    var id, blog, vali, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -47,21 +47,6 @@ var All = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
-                if (!id) {
-                    return [2 /*return*/, res.json({ success: false })];
-                }
-                return [4 /*yield*/, __1.client.bloger.findUnique({
-                        where: {
-                            id: Number(id)
-                        }, select: {
-                            img: true
-                        }
-                    })];
-            case 2:
-                vali = _a.sent();
-                if (!vali) {
-                    return [2 /*return*/, res.json({ success: false })];
-                }
                 return [4 /*yield*/, __1.client.blog.findMany({
                         select: {
                             avtar: true,
@@ -85,8 +70,46 @@ var All = function (req, res) { return __awaiter(void 0, void 0, void 0, functio
                             }
                         }
                     })];
-            case 3:
+            case 2:
                 blog = _a.sent();
+                if (!id) {
+                    return [2 /*return*/, res.json({ success: false, blogs: blog })];
+                }
+                return [4 /*yield*/, __1.client.bloger.findUnique({
+                        where: {
+                            id: Number(id)
+                        }, select: {
+                            img: true
+                        }
+                    })];
+            case 3:
+                vali = _a.sent();
+                if (!vali) {
+                    return [2 /*return*/, res.json({ success: false, blogs: blog })];
+                }
+                // const blog = await client.blog.findMany({
+                //   select: {
+                //     avtar: true,
+                //     content: true,
+                //     title: true,
+                //     created: true,
+                //     id: true,
+                //     authore: {
+                //       select: {
+                //         name: true, img: true,
+                //         id: true
+                //       }
+                //     }, Likes: {
+                //       select: {
+                //         blogerId: true,
+                //       }
+                //     }
+                //   }, orderBy: {
+                //     Likes:{
+                //       _count:"desc"
+                //     }
+                //   }
+                // })
                 return [2 /*return*/, res.json({ success: true, blogs: blog, vali: vali ? vali.img : vali })];
             case 4:
                 error_1 = _a.sent();

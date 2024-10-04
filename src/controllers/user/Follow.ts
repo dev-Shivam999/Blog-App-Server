@@ -5,6 +5,22 @@ export const Follow = async (req: Request, res: Response) => {
     const val = req.header("Authorization"); 
     const auth = req.header("Lol"); 
 
+
+
+
+    if (!auth) {
+        return res.json({success:false, message:"login plz"})
+    }
+  const u=  await client.bloger.findUnique({
+        where:{
+            id:Number(auth)
+        }
+    })
+ if (u==null) {
+    return res.json({success:false, message:"login plz"})
+ }
+
+
     const isFollowing = await client.follow.findFirst({
         where: {
             follow: Number(auth),

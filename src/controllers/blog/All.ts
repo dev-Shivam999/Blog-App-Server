@@ -8,20 +8,6 @@ export const All = async (req: Request, res: Response) => {
 
 
   try {
-    if (!id) {
-
-      return res.json({ success: false })
-    }
-    const vali = await client.bloger.findUnique({
-      where: {
-        id: Number(id)
-      }, select: {
-        img: true
-      }
-    })
-  if (!vali) {
-    return res.json({success: false})
-  }
     const blog = await client.blog.findMany({
       select: {
         avtar: true,
@@ -36,19 +22,60 @@ export const All = async (req: Request, res: Response) => {
 
           }
         }, Likes: {
-          
+
           select: {
             blogerId: true,
           }
         }
 
       }, orderBy: {
-        Likes:{
-          _count:"desc"
+        Likes: {
+          _count: "desc"
         }
 
       }
     })
+    if (!id) {
+     
+      return res.json({ success: false, blogs:blog })
+    }
+    const vali = await client.bloger.findUnique({
+      where: {
+        id: Number(id)
+      }, select: {
+        img: true
+      }
+    })
+  if (!vali) {
+    return res.json({success: false,blogs:blog})
+  }
+    // const blog = await client.blog.findMany({
+    //   select: {
+    //     avtar: true,
+    //     content: true,
+    //     title: true,
+    //     created: true,
+    //     id: true,
+    //     authore: {
+    //       select: {
+    //         name: true, img: true,
+    //         id: true
+
+    //       }
+    //     }, Likes: {
+          
+    //       select: {
+    //         blogerId: true,
+    //       }
+    //     }
+
+    //   }, orderBy: {
+    //     Likes:{
+    //       _count:"desc"
+    //     }
+
+    //   }
+    // })
 
 
     return res.json({ success: true, blogs: blog, vali: vali ? vali.img : vali })
