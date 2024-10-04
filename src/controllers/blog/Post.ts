@@ -4,13 +4,13 @@ import { client } from "../..";
 
 export const PostCreate = async (req: Request<{}, {}, Post>, res: Response) => {
     const  Post  = req.body
+    console.log(Post);
+    
+    
     
     const auth = req.header("Authorization")
     
-    if(!req.file){
-        return res.json({success: false, message:"plz upload img"})
-    }
-   
+  
     
     
     
@@ -40,7 +40,7 @@ export const PostCreate = async (req: Request<{}, {}, Post>, res: Response) => {
                 
                 content: Post.content,
                 authoreId: Number(auth.toString()),
-                avtar: `/uploads/${req.file.filename}`,
+                avtar: Post.avtar,
 
 
 

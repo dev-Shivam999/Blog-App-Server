@@ -5,6 +5,8 @@ export const BlogDelete=async(req: Request, res: Response)=>{
 const id=req.body
 
 const user=req.header("authorization")
+
+
 try {
 
     await client.blog.delete({

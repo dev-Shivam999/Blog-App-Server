@@ -34,15 +34,15 @@ model Save {
   id       Int    @id @default(autoincrement())
   blogId   String
   blogerId Int
-  blog     Blog   @relation(fields: [blogId], references: [id])
-  bloger   Bloger @relation(fields: [blogerId], references: [id])
+  blog     Blog   @relation(fields: [blogId], references: [id],onDelete: Cascade)
+  bloger   Bloger @relation(fields: [blogerId], references: [id],onDelete: Cascade)
 }
 
 model Like {
   id       Int    @id @default(autoincrement())
-  blog     Blog   @relation(fields: [blogId], references: [id])
+  blog     Blog   @relation(fields: [blogId], references: [id],onDelete: Cascade)
   blogId   String
-  bloger   Bloger @relation(fields: [blogerId], references: [id])
+  bloger   Bloger @relation(fields: [blogerId], references: [id],onDelete: Cascade)
   blogerId Int
 }
 

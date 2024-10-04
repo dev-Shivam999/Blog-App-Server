@@ -47,9 +47,6 @@ var SignIn = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
-                if (!req.file) {
-                    return [2 /*return*/, res.json({ susses: false, message: "Please upload your img" })];
-                }
                 return [4 /*yield*/, __1.client.bloger.findFirst({
                         where: {
                             email: body.email,
@@ -64,7 +61,7 @@ var SignIn = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                         data: {
                             email: body.email,
                             name: body.name,
-                            img: "/uploads/".concat(req.file.filename),
+                            img: body.avtar,
                             password: body.password
                         }, select: {
                             id: true,

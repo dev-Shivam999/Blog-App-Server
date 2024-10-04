@@ -5,12 +5,10 @@ import { client } from "../..";
 export const SignIn = async (req: Request<{}, {}, data>, res: Response) => {
     const body  = req.body;
     
+ 
     
     try {
 
-        if (!req.file) {
-            return res.json({ susses: false, message: "Please upload your img" });
-        }
         
         
         
@@ -20,6 +18,8 @@ export const SignIn = async (req: Request<{}, {}, data>, res: Response) => {
                 email: body.email,
             }
         })
+        
+        
 
         if (user) {
             return res.json({ success: false, message: "user have account already" })
@@ -31,7 +31,7 @@ export const SignIn = async (req: Request<{}, {}, data>, res: Response) => {
             data: {
                 email: body.email,
                 name: body.name,
-                img: `/uploads/${req.file.filename}`,
+                img: body.avtar,
                 password: body.password
 
                 

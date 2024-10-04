@@ -44,10 +44,8 @@ var PostCreate = function (req, res) { return __awaiter(void 0, void 0, void 0, 
         switch (_a.label) {
             case 0:
                 Post = req.body;
+                console.log(Post);
                 auth = req.header("Authorization");
-                if (!req.file) {
-                    return [2 /*return*/, res.json({ success: false, message: "plz upload img" })];
-                }
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
@@ -69,7 +67,7 @@ var PostCreate = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                             title: Post.Title,
                             content: Post.content,
                             authoreId: Number(auth.toString()),
-                            avtar: "/uploads/".concat(req.file.filename),
+                            avtar: Post.avtar,
                         }, select: {
                             id: true
                         }

@@ -1,7 +1,7 @@
 export interface data {
   
         email: string,
-        img: string,
+        avtar: string,
         name: string,
         password: string
    

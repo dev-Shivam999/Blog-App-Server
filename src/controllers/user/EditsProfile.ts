@@ -8,56 +8,65 @@ export const EditsProfile = async (req: Request, res: Response) => {
     const id = req.header("authorization");
     const user = req.body;
 
+  
+
     try {
-        if (!req.file) {
+        
             if (id) {
-                await client.bloger.update({
+             await client.bloger.update({
                     where: {
                         id: Number(id),
                     },
                     data: {
                         name: user.name,
+                        img: user.avtar
                     },
                 });
+              
+                
                 return res.json({ success: true });
             }
-        } else {
-            if (id) {
-                const data = await client.bloger.findFirst({
-                    where: {
-                        id: Number(id),
-                    },
-                    select: {
-                        img: true,
-                    },
-                });
+        // } else {
+        //     if (id) {
+        //         const data = await client.bloger.findFirst({
+        //             where: {
+        //                 id: Number(id),
+        //             },
+        //             select: {
+        //                 img: true,
+        //             },
+        //         });
                
 
-                if (data && data.img) {
-                    const filePath = path.resolve(
-                        `dist/uploads/${data.img.split("/uploads/")[1]}`
-                    );
+        //         if (data && data.img) {
+        //             const filePath = path.resolve(
+        //                 `dist/uploads/${data.img.split("/uploads/")[1]}`
+        //             );
                     
 
-                    if (fs.existsSync(filePath)) {
-                        fs.unlinkSync(filePath);
-                    } else {
-                        console.log("File not found");
-                    }
+        //             if (fs.existsSync(filePath)) {
+        //                 fs.unlinkSync(filePath);
+        //             } else {
+        //                 console.log("File not found");
+        //             }
 
-                    await client.bloger.update({
-                        where: {
-                            id: Number(id),
-                        },
-                        data: {
-                            name: user.name,
-                            img: `/uploads/${req.file.filename}`,
-                        },
-                    });
+        //             await client.bloger.update({
+        //                 where: {
+        //                     id: Number(id),
+        //                 },
+        //                 data: {
+        //                     name: user.name,
+        //                     img: `/uploads/${req.file.filename}`,
+        //                 },
+        //             });
                     
-                    return res.json({ success: true });
-                }
-            }
+        //             return res.json({ success: true });
+        //         }
+        //     }
+        // }
+
+        else{
+            return res.json({ success: false,message :"login plz"})
         }
     } catch (error) {
         console.log(error);
