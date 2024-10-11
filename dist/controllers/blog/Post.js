@@ -44,7 +44,6 @@ var PostCreate = function (req, res) { return __awaiter(void 0, void 0, void 0, 
         switch (_a.label) {
             case 0:
                 Post = req.body;
-                console.log(Post);
                 auth = req.header("Authorization");
                 _a.label = 1;
             case 1:

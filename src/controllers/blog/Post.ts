@@ -4,7 +4,7 @@ import { client } from "../..";
 
 export const PostCreate = async (req: Request<{}, {}, Post>, res: Response) => {
     const  Post  = req.body
-    console.log(Post);
+ 
     
     
     

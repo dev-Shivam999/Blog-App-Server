@@ -21,11 +21,9 @@
   },
   "dependencies": {
     "@prisma/extension-accelerate": "^1.1.0",
-    "@types/multer": "^1.4.11",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1",
     "prisma": "^5.16.0"
   }
 }
