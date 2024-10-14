@@ -86,11 +86,7 @@ var Profile = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                                     title: true,
                                     created: true,
                                     id: true,
-                                    Likes: {
-                                        select: {
-                                            blogerId: true,
-                                        }
-                                    }
+                                    Likes: true
                                 }
                             },
                             Followers: {
@@ -120,7 +116,25 @@ var Profile = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                         id: true,
                         name: true,
                         img: true,
-                        blogs: true,
+                        blogs: {
+                            select: {
+                                avtar: true,
+                                content: true,
+                                title: true,
+                                created: true,
+                                id: true,
+                                authore: {
+                                    select: {
+                                        name: true, img: true,
+                                        id: true
+                                    }
+                                }, Likes: {
+                                    select: {
+                                        blogerId: true,
+                                    }
+                                }
+                            }
+                        },
                         Followers: {
                             select: {
                                 follow: true
@@ -128,7 +142,7 @@ var Profile = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                         },
                         Likes: {
                             select: {
-                                blogerId: true
+                                blogId: true
                             }
                         },
                         Following: {

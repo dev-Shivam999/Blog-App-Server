@@ -10,25 +10,25 @@ export const Profile = async (req: Request, res: Response) => {
 
 
     try {
-        if (location =="/Edits") {
+        if (location == "/Edits") {
             const user = await client.bloger.findFirst({
                 where: {
                     id: Number(val)
                 },
                 select: {
-                  
+
                     name: true,
                     img: true,
-                  
+
 
                 }
 
             })
-            return res.json({ success: true, message:  user})
+            return res.json({ success: true, message: user })
 
-        } 
-     
-        
+        }
+
+
         if (auth == undefined) {
             return res.json({ success: false, message: "login plz" })
         }
@@ -59,11 +59,8 @@ export const Profile = async (req: Request, res: Response) => {
                             created: true,
                             id: true,
 
-                            Likes: {
-                                select: {
-                                    blogId:true
-                                }
-                            }
+
+                            Likes: true
                         }
                     },
                     Followers: {
@@ -99,26 +96,44 @@ export const Profile = async (req: Request, res: Response) => {
                     id: true,
                     name: true,
                     img: true,
-                    blogs: true,
-                    Followers: {
-                        select: {
-                            follow: true
+                    blogs: {
+                        select:{
+                        avtar: true,
+                        content: true,
+                        title: true,
+                        created: true,
+                        id: true,
+                        authore: {
+                            select: {
+                                name: true, img: true,
+                                id: true
+
+                            }
+                        }, Likes: {
+
+                            select: {
+                                blogerId: true,
+                            }
+                        }}},
+                        Followers: {
+                            select: {
+                                follow: true
+                            }
+                        },
+                        Likes: {
+                            select: {
+                                blogId: true
+                            }
+                        },
+                        Following: {
+                            select: {
+                                follower: true
+                            }
                         }
-                    },
-                    Likes: {
-                        select: {
-                            blogerId: true
-                        }
-                    },
-                    Following: {
-                        select: {
-                            follower: true
-                        }
+
                     }
 
-                }
-
-            })
+                })
             if (!user) {
                 return res.json({ success: false, message: "login plz" })
 
