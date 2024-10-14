@@ -55,12 +55,13 @@ export const Profile = async (req: Request, res: Response) => {
                             avtar: true,
                             content: true,
                             title: true,
+
                             created: true,
                             id: true,
 
                             Likes: {
                                 select: {
-                                    blogerId: true,
+                                    blogId:true
                                 }
                             }
                         }
