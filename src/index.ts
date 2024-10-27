@@ -13,19 +13,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/user',routes)
-
-
-
-dotenv.config() // Load the environment variables
-
-
-
-
-
-
-
-
-
+dotenv.config() 
 app.listen(3000, () => {
     console.log('listening on port 3000');
 
