@@ -35,11 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostCreate = void 0;
 var __1 = require("../..");
+var redis_1 = __importDefault(require("../../utils/redis/redis"));
 var PostCreate = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var Post, auth, validation, daa, error_1;
+    var Post, auth, validation, validation_1, user, daa, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -47,38 +51,64 @@ var PostCreate = function (req, res) { return __awaiter(void 0, void 0, void 0, 
                 auth = req.header("Authorization");
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
+                _a.trys.push([1, 12, , 13]);
                 if (auth == undefined) {
                     return [2 /*return*/, res.json({ success: false, message: "login first" })];
                 }
-                return [4 /*yield*/, __1.client.bloger.findFirst({
-                        where: {
-                            id: Number(auth.toString())
-                        }
-                    })];
+                return [4 /*yield*/, redis_1.default.get("User")];
             case 2:
                 validation = _a.sent();
-                if (validation == null) {
-                    return [2 /*return*/, res.json({ success: false, message: "login first" })];
-                }
-                return [4 /*yield*/, __1.client.blog.create({
-                        data: {
-                            title: Post.Title,
-                            content: Post.content,
-                            authoreId: Number(auth.toString()),
-                            avtar: Post.avtar,
-                        }, select: {
+                if (!!validation) return [3 /*break*/, 5];
+                return [4 /*yield*/, __1.client.bloger.findMany({
+                        select: {
                             id: true
                         }
                     })];
             case 3:
-                daa = _a.sent();
-                return [2 /*return*/, res.json({ success: true, message: daa.id })];
+                validation_1 = _a.sent();
+                user = validation_1.find(function (u) { return u.id === Number(auth.toString()); });
+                return [4 /*yield*/, redis_1.default.set("User", JSON.stringify(validation_1))];
             case 4:
+                _a.sent();
+                if (user == null) {
+                    return [2 /*return*/, res.json({ success: false, message: "login first" })];
+                }
+                return [3 /*break*/, 7];
+            case 5: return [4 /*yield*/, JSON.parse(validation)];
+            case 6:
+                validation = _a.sent();
+                validation = Array.isArray(validation) ? validation.find(function (p) { return p.id === Number(auth.toString()); }) : null;
+                if (validation == null) {
+                    return [2 /*return*/, res.json({ success: false, message: "login first" })];
+                }
+                _a.label = 7;
+            case 7: return [4 /*yield*/, __1.client.blog.create({
+                    data: {
+                        title: Post.Title,
+                        content: Post.content,
+                        authoreId: Number(auth.toString()),
+                        avtar: Post.avtar,
+                    }, select: {
+                        id: true
+                    }
+                })];
+            case 8:
+                daa = _a.sent();
+                return [4 /*yield*/, redis_1.default.del("Blogs")];
+            case 9:
+                _a.sent();
+                return [4 /*yield*/, redis_1.default.del("User")];
+            case 10:
+                _a.sent();
+                return [4 /*yield*/, redis_1.default.del("BloggerProfile")];
+            case 11:
+                _a.sent();
+                return [2 /*return*/, res.json({ success: true, message: daa.id })];
+            case 12:
                 error_1 = _a.sent();
                 console.log(error_1, "Error");
                 return [2 /*return*/, res.json({ success: false, })];
-            case 5: return [2 /*return*/];
+            case 13: return [2 /*return*/];
         }
     });
 }); };

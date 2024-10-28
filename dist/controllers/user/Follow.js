@@ -35,11 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Follow = void 0;
 var __1 = require("../..");
+var redis_1 = __importDefault(require("../../utils/redis/redis"));
 var Follow = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var val, auth, u, isFollowing, error_1;
+    var val, auth, user, isFollowing, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -48,14 +52,17 @@ var Follow = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 if (!auth) {
                     return [2 /*return*/, res.json({ success: false, message: "login plz" })];
                 }
-                return [4 /*yield*/, __1.client.bloger.findUnique({
+                return [4 /*yield*/, __1.client.bloger.findFirst({
                         where: {
                             id: Number(auth)
+                        },
+                        select: {
+                            id: true
                         }
                     })];
             case 1:
-                u = _a.sent();
-                if (u == null) {
+                user = _a.sent();
+                if (user == null) {
                     return [2 /*return*/, res.json({ success: false, message: "login plz" })];
                 }
                 return [4 /*yield*/, __1.client.follow.findFirst({
@@ -68,34 +75,37 @@ var Follow = function (req, res) { return __awaiter(void 0, void 0, void 0, func
                 isFollowing = _a.sent();
                 _a.label = 3;
             case 3:
-                _a.trys.push([3, 8, , 9]);
-                if (!!isFollowing) return [3 /*break*/, 5];
+                _a.trys.push([3, 9, , 10]);
+                return [4 /*yield*/, redis_1.default.del("BloggerProfile")];
+            case 4:
+                _a.sent();
+                if (!!isFollowing) return [3 /*break*/, 6];
                 return [4 /*yield*/, __1.client.follow.create({
                         data: {
                             follow: Number(auth),
                             follower: Number(val)
                         },
                     })];
-            case 4:
+            case 5:
                 _a.sent();
                 res.json({ success: true, message: "Followed successfully" });
-                return [3 /*break*/, 7];
-            case 5: return [4 /*yield*/, __1.client.follow.deleteMany({
+                return [3 /*break*/, 8];
+            case 6: return [4 /*yield*/, __1.client.follow.deleteMany({
                     where: {
                         follow: Number(auth),
                         follower: Number(val),
                     },
                 })];
-            case 6:
+            case 7:
                 _a.sent();
                 res.json({ success: true, message: "Unfollowed successfully" });
-                _a.label = 7;
-            case 7: return [3 /*break*/, 9];
-            case 8:
+                _a.label = 8;
+            case 8: return [3 /*break*/, 10];
+            case 9:
                 error_1 = _a.sent();
                 console.log(error_1);
                 return [2 /*return*/, res.json({ success: false })];
-            case 9: return [2 /*return*/];
+            case 10: return [2 /*return*/];
         }
     });
 }); };

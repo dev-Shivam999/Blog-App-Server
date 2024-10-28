@@ -35,17 +35,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.showPost = void 0;
 var __1 = require("../..");
+var redis_1 = __importDefault(require("../../utils/redis/redis"));
 var showPost = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, posts;
+    var id, posts, posts_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
-                return [4 /*yield*/, __1.client.blog.findFirst({
-                        where: { id: id },
+                return [4 /*yield*/, redis_1.default.get("Blogs")];
+            case 1:
+                posts = _a.sent();
+                if (!!posts) return [3 /*break*/, 3];
+                return [4 /*yield*/, __1.client.blog.findMany({
                         select: {
                             avtar: true,
                             content: true,
@@ -53,16 +60,29 @@ var showPost = function (req, res) { return __awaiter(void 0, void 0, void 0, fu
                             created: true,
                             id: true,
                             authore: {
-                                select: {
-                                    name: true,
-                                    img: true,
-                                    id: true,
-                                }
-                            }
+                                select: { name: true, img: true, id: true },
+                            },
+                            Likes: {
+                                select: { blogerId: true },
+                            },
+                        },
+                        orderBy: {
+                            Likes: {
+                                _count: "desc",
+                            },
                         }
                     })];
-            case 1:
+            case 2:
+                posts_1 = _a.sent();
+                if (!posts_1) {
+                    return [2 /*return*/, res.json({ success: false })];
+                }
+                redis_1.default.set("Blogs", JSON.stringify(posts_1));
+                return [2 /*return*/, res.json({ success: true, data: posts_1 })];
+            case 3: return [4 /*yield*/, JSON.parse(posts)];
+            case 4:
                 posts = _a.sent();
+                posts = Array.isArray(posts) ? posts.find(function (p) { return p.id === id; }) : null;
                 if (!posts) {
                     return [2 /*return*/, res.json({ success: false })];
                 }

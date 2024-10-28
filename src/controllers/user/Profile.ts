@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { client } from "../..";
+import RedisApi from "../../utils/redis/redis";
+import { Follow } from "./Follow";
 
 export const Profile = async (req: Request, res: Response) => {
 
@@ -11,21 +13,26 @@ export const Profile = async (req: Request, res: Response) => {
 
     try {
         if (location == "/Edits") {
-            const user = await client.bloger.findFirst({
-                where: {
-                    id: Number(val)
-                },
-                select: {
+            let user = await RedisApi.get("User")
+            if (!user) {
+                let ser = await client.bloger.findMany({
 
-                    name: true,
-                    img: true,
+                    select: {
+                        id: true,
+                        name: true,
+                        img: true,
 
 
-                }
+                    }
 
-            })
+                })
+                await RedisApi.set("User", JSON.stringify(ser))
+                const user = ser.find((u) => u.id === Number(val))
+                return res.json({ success: true, message: user })
+            }
+            user = await JSON.parse(user)
+            user = Array.isArray(user) ? user.find((p) => p.id === Number(val)) : null;
             return res.json({ success: true, message: user })
-
         }
 
 
@@ -40,54 +47,68 @@ export const Profile = async (req: Request, res: Response) => {
 
 
         if (location == "BloggerProfile") {
+            let use = await RedisApi.get("BloggerProfile")
 
-            const user = await client.bloger.findFirst({
-                where: {
-                    id: Number(auth)
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    img: true,
-                    blogs: {
-                        select: {
-                            authoreId: true,
-                            avtar: true,
-                            content: true,
-                            title: true,
-
-                            created: true,
-                            id: true,
-
-
-                            Likes: true
-                        }
+            if (!use) {
+                
+                let user = await client.bloger.findMany({
+                    where: {
+                        id: Number(auth)
                     },
-                    Followers: {
-                        select: {
-                            follow: true
-                        }
-                    },
-                    Following: {
-                        select: {
-                            follow: true
-                        }
-                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        img: true,
+                        blogs: {
+                            select: {
+                                authoreId: true,
+                                avtar: true,
+                                content: true,
+                                title: true,
+
+                                created: true,
+                                id: true,
+
+
+                                Likes: true
+                            }
+                        },
+                        Followers: {
+                            select: {
+                                follow: true
+                            }
+                        },
+                        Following: {
+                            select: {
+                                follow: true
+                            }
+                        },
+
+                    }
+
+                })
+
+                await RedisApi.set("BloggerProfile", JSON.stringify(user))
+                user = user.filter(p => p.id == Number(auth))
+
+                if (!user) {
+                    return res.json({ success: false, message: "Not found" })
 
                 }
 
-            })
 
-
-
-            if (!user) {
-                return res.json({ success: false, message: "Not found" })
-
+                if (user[0].Followers.length > 0) {
+                    const data = user[0].Followers.some(p => p?.follow == Number(val))
+                   return res.json({ success: true, message: { user:user[0], data }, })
+                }
+                const data = false;
+                return res.json({ success: true, message: { user: user[0], data }, })
             }
-            const data = user.Followers.some(p => p.follow == Number(val))
+            use = await JSON.parse(use)
+            const user = Array.isArray(use) ? use.find((p) => p.id === Number(auth)) : null
+            const data = user.Followers.some((p: { follow: Number }) => p.follow == Number(val))
 
-            res.json({ success: true, message: { user, data }, })
-
+            res.json({ success: true, message: { user, data } })
         } else {
             const user = await client.bloger.findFirst({
                 where: {
@@ -97,49 +118,51 @@ export const Profile = async (req: Request, res: Response) => {
                     name: true,
                     img: true,
                     blogs: {
-                        select:{
-                        avtar: true,
-                        content: true,
-                        title: true,
-                        created: true,
-                        id: true,
-                        authore: {
-                            select: {
-                                name: true, img: true,
-                                id: true
+                        select: {
+                            avtar: true,
+                            content: true,
+                            title: true,
+                            created: true,
+                            id: true,
+                            authore: {
+                                select: {
+                                    name: true, img: true,
+                                    id: true
 
-                            }
-                        }, Likes: {
+                                }
+                            }, Likes: {
 
-                            select: {
-                                blogerId: true,
-                            }
-                        }}},
-                        Followers: {
-                            select: {
-                                follow: true
-                            }
-                        },
-                        Likes: {
-                            select: {
-                                blogId: true
-                            }
-                        },
-                        Following: {
-                            select: {
-                                follower: true
+                                select: {
+                                    blogerId: true,
+                                }
                             }
                         }
-
+                    },
+                    Followers: {
+                        select: {
+                            follow: true
+                        }
+                    },
+                    Likes: {
+                        select: {
+                            blogId: true
+                        }
+                    },
+                    Following: {
+                        select: {
+                            follower: true
+                        }
                     }
 
-                })
+                }
+
+            })
             if (!user) {
                 return res.json({ success: false, message: "login plz" })
 
             }
 
-            res.json({ success: true, message: { user } })
+           return res.json({ success: true, message: { user } })
         }
 
     } catch (error) {

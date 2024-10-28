@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { client } from "../..";
 import fs from "fs";
 import path from "path";
+import RedisApi from "../../utils/redis/redis";
 
 
 export const EditsProfile = async (req: Request, res: Response) => {
@@ -23,7 +24,7 @@ export const EditsProfile = async (req: Request, res: Response) => {
                     },
                 });
               
-                
+                await RedisApi.del("User")
                 return res.json({ success: true });
             }
         // } else {

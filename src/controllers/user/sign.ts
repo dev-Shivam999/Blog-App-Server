@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { data } from "../../utils/types/types";
 import { client } from "../..";
+import RedisApi from "../../utils/redis/redis";
 
 export const SignIn = async (req: Request<{}, {}, data>, res: Response) => {
     const body  = req.body;
@@ -39,7 +40,7 @@ export const SignIn = async (req: Request<{}, {}, data>, res: Response) => {
                 id: true,
             }
         })
-        
+        await RedisApi.del("User")
 
         return res.json({ success: true, message: `${userId.id}` })
     } catch (error) {

@@ -35,87 +35,82 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.All = void 0;
-var __1 = require("../..");
+var __1 = require("../.."); // Database client
+var redis_1 = __importDefault(require("../../utils/redis/redis"));
 var All = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, blog, vali, error_1;
+    var id, cachedBlogs, cachedUsers, user_1, blogs, users, user, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.header("authorization");
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 4, , 5]);
-                return [4 /*yield*/, __1.client.blog.findMany({
-                        select: {
-                            avtar: true,
-                            content: true,
-                            title: true,
-                            created: true,
-                            id: true,
-                            authore: {
-                                select: {
-                                    name: true, img: true,
-                                    id: true
-                                }
-                            }, Likes: {
-                                select: {
-                                    blogerId: true,
-                                }
-                            }
-                        }, orderBy: {
-                            Likes: {
-                                _count: "desc"
-                            }
-                        }
-                    })];
+                _a.trys.push([1, 9, , 10]);
+                return [4 /*yield*/, redis_1.default.get("Blogs")];
             case 2:
-                blog = _a.sent();
+                cachedBlogs = _a.sent();
+                if (!cachedBlogs) return [3 /*break*/, 4];
+                cachedBlogs = JSON.parse(cachedBlogs);
                 if (!id) {
-                    return [2 /*return*/, res.json({ success: false, blogs: blog })];
+                    return [2 /*return*/, res.json({ success: false, blogs: cachedBlogs })];
                 }
-                return [4 /*yield*/, __1.client.bloger.findUnique({
-                        where: {
-                            id: Number(id)
-                        }, select: {
-                            img: true
-                        }
-                    })];
+                return [4 /*yield*/, redis_1.default.get("User")];
             case 3:
-                vali = _a.sent();
-                if (!vali) {
-                    return [2 /*return*/, res.json({ success: false, blogs: blog })];
+                cachedUsers = _a.sent();
+                if (cachedUsers) {
+                    cachedUsers = JSON.parse(cachedUsers);
+                    user_1 = Array.isArray(cachedUsers) ? cachedUsers.find(function (p) { return p.id === Number(id); }) : null;
+                    return [2 /*return*/, res.json({ success: true, blogs: cachedBlogs, vali: user_1 ? user_1.img : null })];
                 }
-                // const blog = await client.blog.findMany({
-                //   select: {
-                //     avtar: true,
-                //     content: true,
-                //     title: true,
-                //     created: true,
-                //     id: true,
-                //     authore: {
-                //       select: {
-                //         name: true, img: true,
-                //         id: true
-                //       }
-                //     }, Likes: {
-                //       select: {
-                //         blogerId: true,
-                //       }
-                //     }
-                //   }, orderBy: {
-                //     Likes:{
-                //       _count:"desc"
-                //     }
-                //   }
-                // })
-                return [2 /*return*/, res.json({ success: true, blogs: blog, vali: vali ? vali.img : vali })];
-            case 4:
+                _a.label = 4;
+            case 4: return [4 /*yield*/, __1.client.blog.findMany({
+                    select: {
+                        avtar: true,
+                        content: true,
+                        title: true,
+                        created: true,
+                        id: true,
+                        authore: {
+                            select: { name: true, img: true, id: true },
+                        },
+                        Likes: {
+                            select: { blogerId: true },
+                        },
+                    },
+                    orderBy: {
+                        Likes: {
+                            _count: "desc",
+                        },
+                    },
+                })];
+            case 5:
+                blogs = _a.sent();
+                return [4 /*yield*/, redis_1.default.set("Blogs", JSON.stringify(blogs))];
+            case 6:
+                _a.sent(); // Cache for 1 hour
+                if (!id) {
+                    return [2 /*return*/, res.json({ success: false, blogs: blogs })];
+                }
+                return [4 /*yield*/, __1.client.bloger.findMany({
+                        select: { id: true, img: true },
+                    })];
+            case 7:
+                users = _a.sent();
+                return [4 /*yield*/, redis_1.default.set("User", JSON.stringify(users))];
+            case 8:
+                _a.sent();
+                user = users.find(function (u) { return u.id === Number(id); });
+                return [2 /*return*/, res.json({ success: true, blogs: blogs, vali: user ? user.img : null })];
+            case 9:
                 error_1 = _a.sent();
-                console.log(error_1);
+                console.error("Error fetching data:", error_1);
                 return [2 /*return*/, res.json({ success: false })];
-            case 5: return [2 /*return*/];
+            case 10: return [2 /*return*/];
         }
     });
 }); };

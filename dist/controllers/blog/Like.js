@@ -35,9 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LikeCount = void 0;
 var __1 = require("../..");
+var redis_1 = __importDefault(require("../../utils/redis/redis"));
 var LikeCount = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, userId, user, cl, error_1;
     return __generator(this, function (_a) {
@@ -47,55 +51,63 @@ var LikeCount = function (req, res) { return __awaiter(void 0, void 0, void 0, f
                 userId = req.header('authorization');
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 8, , 9]);
+                _a.trys.push([1, 11, , 12]);
                 if (!userId) {
                     return [2 /*return*/, res.json({ success: false, message: false })];
                 }
                 return [4 /*yield*/, __1.client.bloger.findFirst({
                         where: {
-                            id: Number(userId),
-                        }, select: {
-                            Likes: true
-                        }
+                            id: Number(userId)
+                        },
+                        select: { id: true, img: true },
                     })];
             case 2:
                 user = _a.sent();
                 if (!user) {
                     return [2 /*return*/, res.json({ success: false, message: false })];
                 }
+                return [4 /*yield*/, redis_1.default.del("Blogs")];
+            case 3:
+                _a.sent();
+                return [4 /*yield*/, redis_1.default.del("User")];
+            case 4:
+                _a.sent();
+                return [4 /*yield*/, redis_1.default.del("BloggerProfile")];
+            case 5:
+                _a.sent();
                 return [4 /*yield*/, __1.client.like.findFirst({
                         where: {
                             blogerId: Number(userId),
                             blogId: String(id.id)
                         }
                     })];
-            case 3:
+            case 6:
                 cl = _a.sent();
-                if (!cl) return [3 /*break*/, 5];
+                if (!cl) return [3 /*break*/, 8];
                 return [4 /*yield*/, __1.client.like.deleteMany({
                         where: {
                             blogerId: Number(userId),
                             blogId: String(id.id)
                         }
                     })];
-            case 4:
+            case 7:
                 _a.sent();
                 return [2 /*return*/, res.json({ success: false, message: true })];
-            case 5: return [4 /*yield*/, __1.client.like.create({
+            case 8: return [4 /*yield*/, __1.client.like.create({
                     data: {
                         blogerId: Number(userId),
                         blogId: id.id,
                     }
                 })];
-            case 6:
+            case 9:
                 _a.sent();
                 return [2 /*return*/, res.json({ success: true, message: true })];
-            case 7: return [3 /*break*/, 9];
-            case 8:
+            case 10: return [3 /*break*/, 12];
+            case 11:
                 error_1 = _a.sent();
                 console.log(error_1);
                 return [2 /*return*/, res.json({ error: false })];
-            case 9: return [2 /*return*/];
+            case 12: return [2 /*return*/];
         }
     });
 }); };

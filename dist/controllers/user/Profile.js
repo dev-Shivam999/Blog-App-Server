@@ -35,11 +35,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Profile = void 0;
 var __1 = require("../..");
+var redis_1 = __importDefault(require("../../utils/redis/redis"));
 var Profile = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var val, auth, location, user, user, data, user, error_1;
+    var val, auth, location, user, ser, user_1, use, user_2, data_1, data_2, user, data, user, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -48,29 +52,44 @@ var Profile = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                 location = req.header("Location");
                 _a.label = 1;
             case 1:
-                _a.trys.push([1, 8, , 9]);
-                if (!(location == "/Edits")) return [3 /*break*/, 3];
-                return [4 /*yield*/, __1.client.bloger.findFirst({
-                        where: {
-                            id: Number(val)
-                        },
+                _a.trys.push([1, 16, , 17]);
+                if (!(location == "/Edits")) return [3 /*break*/, 7];
+                return [4 /*yield*/, redis_1.default.get("User")];
+            case 2:
+                user = _a.sent();
+                if (!!user) return [3 /*break*/, 5];
+                return [4 /*yield*/, __1.client.bloger.findMany({
                         select: {
+                            id: true,
                             name: true,
                             img: true,
                         }
                     })];
-            case 2:
-                user = _a.sent();
-                return [2 /*return*/, res.json({ success: true, message: user })];
             case 3:
+                ser = _a.sent();
+                return [4 /*yield*/, redis_1.default.set("User", JSON.stringify(ser))];
+            case 4:
+                _a.sent();
+                user_1 = ser.find(function (u) { return u.id === Number(val); });
+                return [2 /*return*/, res.json({ success: true, message: user_1 })];
+            case 5: return [4 /*yield*/, JSON.parse(user)];
+            case 6:
+                user = _a.sent();
+                user = Array.isArray(user) ? user.find(function (p) { return p.id === Number(val); }) : null;
+                return [2 /*return*/, res.json({ success: true, message: user })];
+            case 7:
                 if (auth == undefined) {
                     return [2 /*return*/, res.json({ success: false, message: "login plz" })];
                 }
                 if (auth == val) {
                     return [2 /*return*/, res.json({ success: true, message: true })];
                 }
-                if (!(location == "BloggerProfile")) return [3 /*break*/, 5];
-                return [4 /*yield*/, __1.client.bloger.findFirst({
+                if (!(location == "BloggerProfile")) return [3 /*break*/, 13];
+                return [4 /*yield*/, redis_1.default.get("BloggerProfile")];
+            case 8:
+                use = _a.sent();
+                if (!!use) return [3 /*break*/, 11];
+                return [4 /*yield*/, __1.client.bloger.findMany({
                         where: {
                             id: Number(auth)
                         },
@@ -101,15 +120,29 @@ var Profile = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                             },
                         }
                     })];
-            case 4:
-                user = _a.sent();
-                if (!user) {
+            case 9:
+                user_2 = _a.sent();
+                return [4 /*yield*/, redis_1.default.set("BloggerProfile", JSON.stringify(user_2))];
+            case 10:
+                _a.sent();
+                user_2 = user_2.filter(function (p) { return p.id == Number(auth); });
+                if (!user_2) {
                     return [2 /*return*/, res.json({ success: false, message: "Not found" })];
                 }
+                if (user_2[0].Followers.length > 0) {
+                    data_1 = user_2[0].Followers.some(function (p) { return (p === null || p === void 0 ? void 0 : p.follow) == Number(val); });
+                    return [2 /*return*/, res.json({ success: true, message: { user: user_2[0], data: data_1 }, })];
+                }
+                data_2 = false;
+                return [2 /*return*/, res.json({ success: true, message: { user: user_2[0], data: data_2 }, })];
+            case 11: return [4 /*yield*/, JSON.parse(use)];
+            case 12:
+                use = _a.sent();
+                user = Array.isArray(use) ? use.find(function (p) { return p.id === Number(auth); }) : null;
                 data = user.Followers.some(function (p) { return p.follow == Number(val); });
-                res.json({ success: true, message: { user: user, data: data }, });
-                return [3 /*break*/, 7];
-            case 5: return [4 /*yield*/, __1.client.bloger.findFirst({
+                res.json({ success: true, message: { user: user, data: data } });
+                return [3 /*break*/, 15];
+            case 13: return [4 /*yield*/, __1.client.bloger.findFirst({
                     where: {
                         id: Number(val)
                     }, select: {
@@ -152,19 +185,18 @@ var Profile = function (req, res) { return __awaiter(void 0, void 0, void 0, fun
                         }
                     }
                 })];
-            case 6:
+            case 14:
                 user = _a.sent();
                 if (!user) {
                     return [2 /*return*/, res.json({ success: false, message: "login plz" })];
                 }
-                res.json({ success: true, message: { user: user } });
-                _a.label = 7;
-            case 7: return [3 /*break*/, 9];
-            case 8:
+                return [2 /*return*/, res.json({ success: true, message: { user: user } })];
+            case 15: return [3 /*break*/, 17];
+            case 16:
                 error_1 = _a.sent();
                 console.log(error_1);
                 return [2 /*return*/, res.json({ success: false, message: "plz try later" })];
-            case 9: return [2 /*return*/];
+            case 17: return [2 /*return*/];
         }
     });
 }); };
