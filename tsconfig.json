@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "target": "ES2023", // or "esnext"
     "outDir": "./dist",
     "sourceMap": true,
     "noImplicitAny": true,
