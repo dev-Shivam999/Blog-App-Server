@@ -27,18 +27,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.client = void 0;
-var express_1 = __importDefault(require("express"));
-var cors_1 = __importDefault(require("cors"));
-var client_1 = require("@prisma/client");
-var userRoute_1 = require("./routes/userRoute");
-var dotenv = __importStar(require("dotenv"));
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const client_1 = require("@prisma/client");
+const userRoute_1 = require("./routes/userRoute");
+const dotenv = __importStar(require("dotenv"));
 exports.client = new client_1.PrismaClient();
-var app = (0, express_1.default)();
+const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 app.use('/user', userRoute_1.routes);
 dotenv.config();
-app.listen(3000, function () {
+app.listen(3000, () => {
     console.log('listening on port 3000');
 });
-//# sourceMappingURL=index.js.map
