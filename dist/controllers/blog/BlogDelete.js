@@ -17,6 +17,7 @@ const BlogDelete = async (req, res) => {
             }
         });
         await redis_1.default.del("Blogs");
+        await redis_1.default.del("BloggerProfile");
         return res.json({ success: true });
     }
     catch (error) {

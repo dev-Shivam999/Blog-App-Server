@@ -32,12 +32,46 @@ const cors_1 = __importDefault(require("cors"));
 const client_1 = require("@prisma/client");
 const userRoute_1 = require("./routes/userRoute");
 const dotenv = __importStar(require("dotenv"));
-exports.client = new client_1.PrismaClient();
-const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
-app.use(express_1.default.json());
-app.use('/user', userRoute_1.routes);
+const cluster_1 = __importDefault(require("cluster"));
+const os_1 = __importDefault(require("os"));
+const http_1 = __importDefault(require("http"));
+const socket_io_1 = require("socket.io");
 dotenv.config();
-app.listen(3000, () => {
-    console.log('listening on port 3000');
-});
+exports.client = new client_1.PrismaClient();
+const totalCpus = os_1.default.cpus().length;
+if (cluster_1.default.isPrimary) {
+    console.log(`totalCpus: ${totalCpus}`);
+    for (let i = 0; i < totalCpus; i++) {
+        cluster_1.default.fork();
+    }
+    cluster_1.default.on("exit", (worker, code, signal) => {
+        console.log(`worker ${worker.process.pid} exited, starting a new one...`);
+        cluster_1.default.fork();
+    });
+}
+else {
+    const app = (0, express_1.default)();
+    app.use((0, cors_1.default)());
+    app.use(express_1.default.json());
+    const httpServer = http_1.default.createServer(app);
+    const io = new socket_io_1.Server(httpServer, {
+        cors: {
+            origin: "*",
+            credentials: true,
+        },
+    });
+    app.use('/user', userRoute_1.routes);
+    io.on("connection", (socket) => {
+        console.log("Client connected:", socket.id);
+        socket.on("message", (event) => {
+            console.log("User event:", event);
+            io.emit("message", event);
+        });
+        socket.on("disconnect", () => {
+            console.log("Client disconnected:", socket.id);
+        });
+    });
+    httpServer.listen(3000, () => {
+        console.log('Server listening on port 3000');
+    });
+}

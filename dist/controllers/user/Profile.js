@@ -39,9 +39,6 @@ const Profile = async (req, res) => {
             let use = await redis_1.default.get("BloggerProfile");
             if (!use) {
                 let user = await __1.client.bloger.findMany({
-                    where: {
-                        id: Number(auth)
-                    },
                     select: {
                         id: true,
                         name: true,

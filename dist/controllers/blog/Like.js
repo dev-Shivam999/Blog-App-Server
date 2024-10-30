@@ -45,7 +45,7 @@ const LikeCount = async (req, res) => {
                 data: {
                     blogerId: Number(userId),
                     blogId: id.id,
-                }
+                },
             });
             return res.json({ success: true, message: true });
         }

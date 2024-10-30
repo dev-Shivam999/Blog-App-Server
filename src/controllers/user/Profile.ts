@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { client } from "../..";
 import RedisApi from "../../utils/redis/redis";
-import { Follow } from "./Follow";
 
 export const Profile = async (req: Request, res: Response) => {
 
@@ -52,9 +51,7 @@ export const Profile = async (req: Request, res: Response) => {
             if (!use) {
                 
                 let user = await client.bloger.findMany({
-                    where: {
-                        id: Number(auth)
-                    },
+                   
                     select: {
                         id: true,
                         name: true,
@@ -110,6 +107,7 @@ export const Profile = async (req: Request, res: Response) => {
 
             res.json({ success: true, message: { user, data } })
         } else {
+            
             const user = await client.bloger.findFirst({
                 where: {
                     id: Number(val)

@@ -18,6 +18,7 @@ export const BlogDelete = async (req: Request, res: Response) => {
             }
         })
         await RedisApi.del("Blogs")
+        await RedisApi.del("BloggerProfile")
         
 
         return res.json({ success: true })
