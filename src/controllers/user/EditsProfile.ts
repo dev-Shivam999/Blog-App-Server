@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { client } from "../..";
-import fs from "fs";
-import path from "path";
 import RedisApi from "../../utils/redis/redis";
 
 

@@ -35,7 +35,7 @@ const dotenv = __importStar(require("dotenv"));
 const cluster_1 = __importDefault(require("cluster"));
 const os_1 = __importDefault(require("os"));
 const http_1 = __importDefault(require("http"));
-const socket_io_1 = require("socket.io");
+const ws_1 = require("ws");
 dotenv.config();
 exports.client = new client_1.PrismaClient();
 const totalCpus = os_1.default.cpus().length;
@@ -54,21 +54,24 @@ else {
     app.use((0, cors_1.default)());
     app.use(express_1.default.json());
     const httpServer = http_1.default.createServer(app);
-    const io = new socket_io_1.Server(httpServer, {
-        cors: {
-            origin: "*",
-            credentials: true,
-        },
-    });
+    const wss = new ws_1.WebSocketServer({ server: httpServer });
     app.use('/user', userRoute_1.routes);
-    io.on("connection", (socket) => {
-        console.log("Client connected:", socket.id);
-        socket.on("message", (event) => {
-            console.log("User event:", event);
-            io.emit("message", event);
+    // WebSocket connection
+    wss.on("connection", (ws) => {
+        console.log("Client connected");
+        ws.on("message", (message) => {
+            console.log("User message:", message.toString());
+            wss.clients.forEach(client => {
+                if (client.readyState === ws.OPEN) {
+                    client.send(message.toString());
+                }
+            });
         });
-        socket.on("disconnect", () => {
-            console.log("Client disconnected:", socket.id);
+        ws.on("close", () => {
+            console.log("Client disconnected");
+        });
+        ws.on("error", (error) => {
+            console.error("WebSocket error:", error);
         });
     });
     httpServer.listen(3000, () => {

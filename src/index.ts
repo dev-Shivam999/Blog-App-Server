@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv';
 import cluster from 'cluster';
 import os from 'os';
 import http from "http";
-import { Server } from "socket.io";
+import { WebSocketServer } from "ws";
 
 dotenv.config();
 
@@ -30,31 +30,33 @@ if (cluster.isPrimary) {
     app.use(express.json());
 
     const httpServer = http.createServer(app);
-    const io = new Server(httpServer, {
-        cors: {
-            origin: "*",
-            credentials: true,
-        },
-    });
-
-
+    const wss = new WebSocketServer({ server: httpServer });
 
     app.use('/user', routes);
 
-    io.on("connection", (socket) => {
-        console.log("Client connected:", socket.id);
+    // WebSocket connection
+    wss.on("connection", (ws) => {
+        console.log("Client connected");
 
-        socket.on("message", (event) => {
-            console.log("User event:", event);
-            io.emit("message", event);
+        ws.on("message", (message) => {
+            console.log("User message:", message.toString());
+
+            wss.clients.forEach(client => {
+                if (client.readyState === ws.OPEN) {
+                    client.send(message.toString());
+                }
+            });
         });
 
-        socket.on("disconnect", () => {
-            console.log("Client disconnected:", socket.id);
+        ws.on("close", () => {
+            console.log("Client disconnected");
+        });
+
+        ws.on("error", (error) => {
+            console.error("WebSocket error:", error);
         });
     });
 
-    
     httpServer.listen(3000, () => {
         console.log('Server listening on port 3000');
     });
