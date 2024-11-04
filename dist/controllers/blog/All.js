@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.All = void 0;
-const __1 = require("../.."); // Database client
+const __1 = require("../..");
 const redis_1 = __importDefault(require("../../utils/redis/redis"));
 const All = async (req, res) => {
     const id = req.header("authorization");
@@ -42,7 +42,7 @@ const All = async (req, res) => {
                 },
             },
         });
-        await redis_1.default.set("Blogs", JSON.stringify(blogs)); // Cache for 1 hour
+        await redis_1.default.set("Blogs", JSON.stringify(blogs));
         if (!id) {
             return res.json({ success: false, blogs });
         }

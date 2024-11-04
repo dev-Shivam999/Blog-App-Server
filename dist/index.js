@@ -56,7 +56,6 @@ else {
     const httpServer = http_1.default.createServer(app);
     const wss = new ws_1.WebSocketServer({ server: httpServer });
     app.use('/user', userRoute_1.routes);
-    // WebSocket connection
     wss.on("connection", (ws) => {
         console.log("Client connected");
         ws.on("message", (message) => {

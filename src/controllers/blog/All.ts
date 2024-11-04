@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { client } from "../..";  // Database client
+import { client } from "../..";  
 import RedisApi from "../../utils/redis/redis";
 
 export const All = async (req: Request, res: Response) => {
@@ -47,7 +47,7 @@ export const All = async (req: Request, res: Response) => {
       },
     });
 
-    await RedisApi.set("Blogs", JSON.stringify(blogs));  // Cache for 1 hour
+    await RedisApi.set("Blogs", JSON.stringify(blogs));  
 
     if (!id) {
       return res.json({ success: false, blogs });

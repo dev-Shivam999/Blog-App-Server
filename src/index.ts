@@ -34,12 +34,12 @@ if (cluster.isPrimary) {
 
     app.use('/user', routes);
 
-    // WebSocket connection
     wss.on("connection", (ws) => {
         console.log("Client connected");
 
         ws.on("message", (message) => {
             console.log("User message:", message.toString());
+           
 
             wss.clients.forEach(client => {
                 if (client.readyState === ws.OPEN) {

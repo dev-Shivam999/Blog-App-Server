@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Bloger {
@@ -18,8 +18,27 @@ model Bloger {
   Followers Follow[] @relation("Follows")
   Likes     Like[]
   Save      Save[]
+  Chat Chat[]
+  Messages Messages[] @relation("ChatRoom")
+} 
+
+
+model Messages{
+  id Int @id @default(autoincrement())
+  Room Int
+  RoomId Bloger @relation("ChatRoom",fields: [Room],references: [id],onDelete: Cascade)
+  ChatId String
+  Chat Chat[]
 }
 
+model Chat {
+  id           String   @id @default(uuid())
+  SendTo       Int
+  sendTo       Bloger   @relation(fields: [SendTo], references: [id], onDelete: Cascade)
+  content      String
+  messageId    Int
+  messages     Messages @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
 model Follow {
   id       Int    @id @default(autoincrement())
   follow   Int
@@ -34,15 +53,15 @@ model Save {
   id       Int    @id @default(autoincrement())
   blogId   String
   blogerId Int
-  blog     Blog   @relation(fields: [blogId], references: [id],onDelete: Cascade)
-  bloger   Bloger @relation(fields: [blogerId], references: [id],onDelete: Cascade)
+  blog     Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  bloger   Bloger @relation(fields: [blogerId], references: [id], onDelete: Cascade)
 }
 
 model Like {
   id       Int    @id @default(autoincrement())
-  blog     Blog   @relation(fields: [blogId], references: [id],onDelete: Cascade)
+  blog     Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
   blogId   String
-  bloger   Bloger @relation(fields: [blogerId], references: [id],onDelete: Cascade)
+  bloger   Bloger @relation(fields: [blogerId], references: [id], onDelete: Cascade)
   blogerId Int
 }
 
@@ -56,8 +75,6 @@ model Blog {
   avtar     String
   created   DateTime @default(now())
   authore   Bloger   @relation(fields: [authoreId], references: [id], onDelete: Cascade)
-  Likes      Like[]
+  Likes     Like[]
   saves     Save[]
 }
-
-
