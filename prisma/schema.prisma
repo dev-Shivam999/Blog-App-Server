@@ -27,7 +27,7 @@ model Messages{
   id Int @id @default(autoincrement())
   Room Int
   RoomId Bloger @relation("ChatRoom",fields: [Room],references: [id],onDelete: Cascade)
-  ChatId String
+  
   Chat Chat[]
 }
 
