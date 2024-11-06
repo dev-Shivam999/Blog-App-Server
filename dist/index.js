@@ -36,10 +36,11 @@ const cluster_1 = __importDefault(require("cluster"));
 const os_1 = __importDefault(require("os"));
 const http_1 = __importDefault(require("http"));
 const ws_1 = require("ws");
+const redis_1 = __importDefault(require("./utils/redis/redis"));
 dotenv.config();
 exports.client = new client_1.PrismaClient();
 const totalCpus = os_1.default.cpus().length;
-if (cluster_1.default.isPrimary) {
+if ( /*cluster.isPrimary*/false) {
     console.log(`totalCpus: ${totalCpus}`);
     for (let i = 0; i < totalCpus; i++) {
         cluster_1.default.fork();
@@ -58,13 +59,28 @@ else {
     app.use('/user', userRoute_1.routes);
     wss.on("connection", (ws) => {
         console.log("Client connected");
-        ws.on("message", (message) => {
-            console.log("User message:", message.toString());
-            wss.clients.forEach(client => {
-                if (client.readyState === ws.OPEN) {
-                    client.send(message.toString());
+        ws.on("message", async (message) => {
+            const data = JSON.parse(message.toString());
+            console.log("User message:", data);
+            console.log(wss.clients.size);
+            if (data.event == "User") {
+                let user = await redis_1.default.get("User");
+                if (user) {
+                    user = JSON.parse(user);
+                    wss.clients.forEach(client => {
+                        if (client.readyState === ws.OPEN) {
+                            client.send(message.toString());
+                        }
+                    });
                 }
-            });
+            }
+            else {
+                wss.clients.forEach(client => {
+                    if (client.readyState === ws.OPEN) {
+                        client.send(message.toString());
+                    }
+                });
+            }
         });
         ws.on("close", () => {
             console.log("Client disconnected");

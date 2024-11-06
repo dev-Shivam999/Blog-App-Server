@@ -18,7 +18,8 @@ model Bloger {
   Followers Follow[] @relation("Follows")
   Likes     Like[]
   Save      Save[]
-  Chat Chat[]
+  sendChat Chat[] @relation("SendChat")
+  reciveChat Chat[] @relation("ReciveChat")
   Messages Messages[] @relation("ChatRoom")
 } 
 
@@ -34,8 +35,10 @@ model Messages{
 model Chat {
   id           String   @id @default(uuid())
   SendTo       Int
-  sendTo       Bloger   @relation(fields: [SendTo], references: [id], onDelete: Cascade)
-  content      String
+  sendTo       Bloger   @relation("SendChat",fields: [SendTo], references: [id], onDelete: Cascade)
+  content      String[]
+  ReciveFrom Int
+  reciveFrom Bloger @relation("ReciveChat",fields: [ReciveFrom], references:[id], onDelete: Cascade)
   messageId    Int
   messages     Messages @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }

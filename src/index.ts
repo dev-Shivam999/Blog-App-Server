@@ -7,13 +7,16 @@ import cluster from 'cluster';
 import os from 'os';
 import http from "http";
 import { WebSocketServer } from "ws";
+import { log } from 'console';
+import RedisApi from './utils/redis/redis';
+import { json } from 'stream/consumers';
 
 dotenv.config();
 
 export const client = new PrismaClient();
 const totalCpus = os.cpus().length;
 
-if (cluster.isPrimary) {
+if (/*cluster.isPrimary*/false) {
     console.log(`totalCpus: ${totalCpus}`);
 
     for (let i = 0; i < totalCpus; i++) {
@@ -37,15 +40,37 @@ if (cluster.isPrimary) {
     wss.on("connection", (ws) => {
         console.log("Client connected");
 
-        ws.on("message", (message) => {
-            console.log("User message:", message.toString());
-           
-
+        ws.on("message", async(message) => {
+            const data = JSON.parse(message.toString())
+            console.log("User message:", data);
+            
+            console.log(wss.clients.size);
+            
+      if (data.event=="User") {
+        
+        let user=await RedisApi.get("User")
+        if (user) {
+            user=JSON.parse(user)
             wss.clients.forEach(client => {
                 if (client.readyState === ws.OPEN) {
                     client.send(message.toString());
+
                 }
+
             });
+           
+        }
+      }
+
+          else{
+          wss.clients.forEach(client => {
+              if (client.readyState === ws.OPEN) {
+                  client.send(message.toString());
+
+              }
+
+          });
+          }
         });
 
         ws.on("close", () => {

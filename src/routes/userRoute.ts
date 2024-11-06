@@ -12,6 +12,7 @@ import { Follow } from '../controllers/user/Follow';
 import { BlogDelete } from '../controllers/blog/BlogDelete';
 import { LikeCount } from '../controllers/blog/Like';
 import { EditsProfile } from '../controllers/user/EditsProfile';
+import { Chat } from '../controllers/user/Chat';
 
 export const routes:Router=express.Router()
 
@@ -53,3 +54,4 @@ routes.post('/EditsProfile', EditsProfile)
 routes.post('/follow',Follow)
 routes.post('/BlogDelete', BlogDelete)
 routes.post('/Link', LikeCount)
+routes.post('/Chat', Chat)
