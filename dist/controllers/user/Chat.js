@@ -15,40 +15,37 @@ const Chat = async (req, res) => {
             user = await JSON.parse(user);
             return res.json({ success: true, message: user });
         }
+        const sender = await __1.client.bloger.findUnique({ where: { id: Number(val) } });
+        const receiver = await __1.client.bloger.findUnique({ where: { id: Number(auth) } });
+        if (!sender || !receiver) {
+            console.log(auth, receiver);
+            return res.json({ success: false, message: "Sender or receiver not found." });
+        }
         const data = await __1.client.chat.findFirst({
             where: {
                 OR: [
-                    {
-                        ReciveFrom: Number(val),
-                        SendTo: Number(auth),
-                    }, {
-                        ReciveFrom: Number(auth),
-                        SendTo: Number(val),
-                    }
+                    { ReciveFrom: Number(val), SendTo: Number(auth) },
+                    { ReciveFrom: Number(auth), SendTo: Number(val) },
                 ]
             },
-            select: {
-                content: true
-            },
-            orderBy: { content: "asc" }
+            select: { content: true },
+            orderBy: { content: { _count: "asc" } }
         });
-        if (data == null) {
-            await __1.client.chat.create({
+        console.log(data);
+        if (!data) {
+            const newChat = await __1.client.chat.create({
                 data: {
-                    content: [], ReciveFrom: Number(val), SendTo: Number(auth)
+                    ReciveFrom: Number(val),
+                    SendTo: Number(auth),
                 }
             });
-            return res.json({ success: true, message: data });
+            return res.json({ success: true, message: newChat });
         }
-        // const serializedMessages = data.content.map(async (msg) =>
-        //   await RedisApi.rPush(`chat:${val}:${auth}`,
-        //     JSON.stringify(msg))
-        // );
         return res.json({ success: true, message: data });
     }
     catch (error) {
         console.log(error);
-        return res.json({ success: false, error: error });
+        return res.json({ success: false, error });
     }
 };
 exports.Chat = Chat;

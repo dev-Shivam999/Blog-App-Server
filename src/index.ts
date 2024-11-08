@@ -58,8 +58,11 @@ if (/*cluster.isPrimary*/false) {
             const data = JSON.parse(message.toString())
 
 
+          
 
             if (data.event == "User") {
+                
+                
                 const value = UserSocket.get(data.id)
                 ws.userId = data.id
                 if (!value) UserSocket.set(data.id, { ws, messageQue: [] })
@@ -76,29 +79,57 @@ if (/*cluster.isPrimary*/false) {
                 }
 
 
-
+               
 
             }
 
             else {
+
                 const targetClient = UserSocket.get(data.id)
                 if (targetClient) {
 
                     if (targetClient.ws.readyState === WebSocket.OPEN) {
-                        targetClient.ws.send(JSON.stringify({ event: "message", message: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+                        targetClient.ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: data.SendTo }));
 
 
                     }
                     else {
 
                         UserSocket.get(data.id)?.messageQue.push(String(data.message))
-                        console.log(UserSocket.get(data.id)?.messageQue);
-                    }
-                    ws.send(JSON.stringify({ event: "message", message: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+                         }
 
 
                 } else {
-                    ws.send(JSON.stringify({ event: "Error", message: "User not found" }))
+
+                    ws.send(JSON.stringify({ event: "notFount", }))
+
+                }
+                ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+                   
+                if (data.event == "chat") {
+                       
+                 try {
+                     const chatRecord = await client.chat.findFirst({
+                         where: {
+                             OR: [
+                                 { ReciveFrom: Number(data.id), SendTo: Number(ws.userId) },
+                                 { ReciveFrom: Number(ws.userId), SendTo: Number(data.id) }
+                             ]
+                         },select:{
+                            id:true
+                         }
+                     });
+
+
+                     if (chatRecord?.id) {
+                         await client.chatDetails.create({
+                             data: {content:data.message,sendTo:data.id,GetTo:ws.userId, ChatId:chatRecord.id }
+                         });
+                     }
+                 } catch (error) {
+                    console.log(error);
+                    
+                 }
                 }
             }
         });

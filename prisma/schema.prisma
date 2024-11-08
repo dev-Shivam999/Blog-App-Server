@@ -36,11 +36,20 @@ model Chat {
   id           String   @id @default(uuid())
   SendTo       Int
   sendTo       Bloger   @relation("SendChat",fields: [SendTo], references: [id], onDelete: Cascade)
-  content      String[] 
+  content      ChatDetails[]  @relation("ChatDetails")
   ReciveFrom Int
   reciveFrom Bloger @relation("ReciveChat",fields: [ReciveFrom], references:[id], onDelete: Cascade)
   // messageId    Int
   // messages     Messages @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+model ChatDetails{
+  id String @id @default(uuid())
+  content String
+  sendTo String
+  GetTo String
+  ChatId String
+  chatId  Chat @relation("ChatDetails",fields: [ChatId], references:[id], onDelete: Cascade)
+
 }
 model Follow {
   id       Int    @id @default(autoincrement())
