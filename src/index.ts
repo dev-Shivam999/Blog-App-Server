@@ -27,7 +27,7 @@ dotenv.config();
 export const client = new PrismaClient();
 const totalCpus = os.cpus().length;
 
-if (/*cluster.isPrimary*/false) {
+if (cluster.isPrimary) {
     console.log(`totalCpus: ${totalCpus}`);
 
     for (let i = 0; i < totalCpus; i++) {
