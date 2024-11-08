@@ -20,27 +20,27 @@ model Bloger {
   Save      Save[]
   sendChat Chat[] @relation("SendChat")
   reciveChat Chat[] @relation("ReciveChat")
-  Messages Messages[] @relation("ChatRoom")
+  // Messages Messages[] @relation("ChatRoom")
 } 
 
 
-model Messages{
-  id Int @id @default(autoincrement())
-  Room Int
-  RoomId Bloger @relation("ChatRoom",fields: [Room],references: [id],onDelete: Cascade)
+// model Messages{
+//   id Int @id @default(autoincrement())
+//   Room Int
+//   RoomId Bloger @relation("ChatRoom",fields: [Room],references: [id],onDelete: Cascade)
   
-  Chat Chat[]
-}
+//   Chat Chat[]
+// }
 
 model Chat {
   id           String   @id @default(uuid())
   SendTo       Int
   sendTo       Bloger   @relation("SendChat",fields: [SendTo], references: [id], onDelete: Cascade)
-  content      String[]
+  content      String[] 
   ReciveFrom Int
   reciveFrom Bloger @relation("ReciveChat",fields: [ReciveFrom], references:[id], onDelete: Cascade)
-  messageId    Int
-  messages     Messages @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  // messageId    Int
+  // messages     Messages @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 model Follow {
   id       Int    @id @default(autoincrement())

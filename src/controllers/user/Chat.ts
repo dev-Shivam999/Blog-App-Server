@@ -33,20 +33,18 @@ export const Chat = async (req: Request, res: Response) => {
       orderBy: { content: "asc" }
 
     })
-    console.log(data);
-
     if (data == null) {
       await client.chat.create({
         data: {
-          content: ["ddf"], ReciveFrom: Number(val), SendTo: Number(auth), messageId: 3
+          content: [], ReciveFrom: Number(val), SendTo: Number(auth)
         }
       })
       return res.json({ success: true, message: data })
     }
-    const serializedMessages = data.content.map(async (msg) =>
-      await RedisApi.rPush(`chat:${val}:${auth}`,
-        JSON.stringify(msg))
-    );
+    // const serializedMessages = data.content.map(async (msg) =>
+    //   await RedisApi.rPush(`chat:${val}:${auth}`,
+    //     JSON.stringify(msg))
+    // );
 
     return res.json({ success: true, message: data })
 
