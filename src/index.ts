@@ -12,7 +12,8 @@ import RedisApi from './utils/redis/redis';
 
 
 export interface ClientData {
-    ws: ExtendedWebSocket;
+    ws: ExtendedWebSocket
+    messageQue: String[]
 }
 
 export interface ExtendedWebSocket extends WebSocket {
@@ -61,12 +62,17 @@ if (/*cluster.isPrimary*/false) {
             if (data.event == "User") {
                 const value = UserSocket.get(data.id)
                 ws.userId = data.id
-                if (!value) UserSocket.set(data.id, { ws })
+                if (!value) UserSocket.set(data.id, { ws, messageQue: [] })
 
                 else {
 
                     value.ws = ws
-                    
+                    if (value.messageQue.length > 0) {
+
+                        ws.send(JSON.stringify({ event: "Notification", message: value.messageQue }))
+                        value.messageQue = []
+                    }
+
                 }
 
 
@@ -75,13 +81,25 @@ if (/*cluster.isPrimary*/false) {
             }
 
             else {
-                wss.clients.forEach(client => {
-                    if (client.readyState === ws.OPEN) {
-                        client.send(message.toString());
+                const targetClient = UserSocket.get(data.id)
+                if (targetClient) {
+
+                    if (targetClient.ws.readyState === WebSocket.OPEN) {
+                        targetClient.ws.send(JSON.stringify({ event: "message", message: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+
 
                     }
+                    else {
 
-                });
+                        UserSocket.get(data.id)?.messageQue.push(String(data.message))
+                        console.log(UserSocket.get(data.id)?.messageQue);
+                    }
+                    ws.send(JSON.stringify({ event: "message", message: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+
+
+                } else {
+                    ws.send(JSON.stringify({ event: "Error", message: "User not found" }))
+                }
             }
         });
 

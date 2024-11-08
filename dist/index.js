@@ -35,7 +35,7 @@ const dotenv = __importStar(require("dotenv"));
 const cluster_1 = __importDefault(require("cluster"));
 const os_1 = __importDefault(require("os"));
 const http_1 = __importDefault(require("http"));
-const ws_1 = require("ws");
+const ws_1 = __importStar(require("ws"));
 dotenv.config();
 exports.client = new client_1.PrismaClient();
 const totalCpus = os_1.default.cpus().length;
@@ -65,17 +65,30 @@ else {
                 const value = UserSocket.get(data.id);
                 ws.userId = data.id;
                 if (!value)
-                    UserSocket.set(data.id, { ws });
+                    UserSocket.set(data.id, { ws, messageQue: [] });
                 else {
                     value.ws = ws;
+                    if (value.messageQue.length > 0) {
+                        ws.send(JSON.stringify({ event: "Notification", message: value.messageQue }));
+                        value.messageQue = [];
+                    }
                 }
             }
             else {
-                wss.clients.forEach(client => {
-                    if (client.readyState === ws.OPEN) {
-                        client.send(message.toString());
+                const targetClient = UserSocket.get(data.id);
+                if (targetClient) {
+                    if (targetClient.ws.readyState === ws_1.default.OPEN) {
+                        targetClient.ws.send(JSON.stringify({ event: "message", message: data.message, sendTo: ws.userId, getTo: data.SendTo }));
                     }
-                });
+                    else {
+                        UserSocket.get(data.id)?.messageQue.push(String(data.message));
+                        console.log(UserSocket.get(data.id)?.messageQue);
+                    }
+                    ws.send(JSON.stringify({ event: "message", message: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+                }
+                else {
+                    ws.send(JSON.stringify({ event: "Error", message: "User not found" }));
+                }
             }
         });
         ws.on("close", () => {
