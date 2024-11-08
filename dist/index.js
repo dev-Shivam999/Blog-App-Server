@@ -36,7 +36,6 @@ const cluster_1 = __importDefault(require("cluster"));
 const os_1 = __importDefault(require("os"));
 const http_1 = __importDefault(require("http"));
 const ws_1 = require("ws");
-const redis_1 = __importDefault(require("./utils/redis/redis"));
 dotenv.config();
 exports.client = new client_1.PrismaClient();
 const totalCpus = os_1.default.cpus().length;
@@ -57,21 +56,18 @@ else {
     const httpServer = http_1.default.createServer(app);
     const wss = new ws_1.WebSocketServer({ server: httpServer });
     app.use('/user', userRoute_1.routes);
+    const UserSocket = new Map();
     wss.on("connection", (ws) => {
         console.log("Client connected");
         ws.on("message", async (message) => {
             const data = JSON.parse(message.toString());
-            console.log("User message:", data);
-            console.log(wss.clients.size);
             if (data.event == "User") {
-                let user = await redis_1.default.get("User");
-                if (user) {
-                    user = JSON.parse(user);
-                    wss.clients.forEach(client => {
-                        if (client.readyState === ws.OPEN) {
-                            client.send(message.toString());
-                        }
-                    });
+                const value = UserSocket.get(data.id);
+                ws.userId = data.id;
+                if (!value)
+                    UserSocket.set(data.id, { ws });
+                else {
+                    value.ws = ws;
                 }
             }
             else {

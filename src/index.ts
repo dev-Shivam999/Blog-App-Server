@@ -6,12 +6,22 @@ import * as dotenv from 'dotenv';
 import cluster from 'cluster';
 import os from 'os';
 import http from "http";
-import { WebSocketServer } from "ws";
-import { log } from 'console';
+import WebSocket, { WebSocketServer } from "ws";
 import RedisApi from './utils/redis/redis';
-import { json } from 'stream/consumers';
+
+
+
+export interface ClientData {
+    ws: ExtendedWebSocket;
+}
+
+export interface ExtendedWebSocket extends WebSocket {
+    userId: string;
+}
 
 dotenv.config();
+
+
 
 export const client = new PrismaClient();
 const totalCpus = os.cpus().length;
@@ -37,40 +47,42 @@ if (/*cluster.isPrimary*/false) {
 
     app.use('/user', routes);
 
-    wss.on("connection", (ws) => {
+
+    const UserSocket = new Map<String, ClientData>()
+
+    wss.on("connection", (ws: ExtendedWebSocket) => {
         console.log("Client connected");
 
-        ws.on("message", async(message) => {
+        ws.on("message", async (message) => {
             const data = JSON.parse(message.toString())
-            console.log("User message:", data);
-            
-            console.log(wss.clients.size);
-            
-      if (data.event=="User") {
-        
-        let user=await RedisApi.get("User")
-        if (user) {
-            user=JSON.parse(user)
-            wss.clients.forEach(client => {
-                if (client.readyState === ws.OPEN) {
-                    client.send(message.toString());
 
+
+
+            if (data.event == "User") {
+                const value = UserSocket.get(data.id)
+                ws.userId = data.id
+                if (!value) UserSocket.set(data.id, { ws })
+
+                else {
+
+                    value.ws = ws
+                    
                 }
 
-            });
-           
-        }
-      }
 
-          else{
-          wss.clients.forEach(client => {
-              if (client.readyState === ws.OPEN) {
-                  client.send(message.toString());
 
-              }
 
-          });
-          }
+            }
+
+            else {
+                wss.clients.forEach(client => {
+                    if (client.readyState === ws.OPEN) {
+                        client.send(message.toString());
+
+                    }
+
+                });
+            }
         });
 
         ws.on("close", () => {

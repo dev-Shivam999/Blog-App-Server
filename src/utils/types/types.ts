@@ -22,3 +22,5 @@ export interface Post2 {
         blodId: string
     }
 }
+
+
