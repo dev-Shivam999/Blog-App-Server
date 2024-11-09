@@ -78,7 +78,7 @@ else {
                 const targetClient = UserSocket.get(data.id);
                 if (targetClient) {
                     if (targetClient.ws.readyState === ws_1.default.OPEN) {
-                        targetClient.ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: ws.userId, Time: new Date().toLocaleTimeString() }));
+                        targetClient.ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: data.id, getTo: ws.userId, Time: new Date().toLocaleTimeString() }));
                     }
                     else {
                         UserSocket.get(data.id)?.messageQue.push(String(data.message));
@@ -87,7 +87,7 @@ else {
                 else {
                     ws.send(JSON.stringify({ event: "notFount", }));
                 }
-                ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: ws.userId, Time: new Date().toLocaleTimeString() }));
+                ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: data.id, getTo: ws.userId, Time: new Date().toLocaleTimeString() }));
                 if (data.event == "chat") {
                     try {
                         const chatRecord = await exports.client.chat.findFirst({
