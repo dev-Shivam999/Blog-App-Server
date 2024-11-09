@@ -39,7 +39,7 @@ const ws_1 = __importStar(require("ws"));
 dotenv.config();
 exports.client = new client_1.PrismaClient();
 const totalCpus = os_1.default.cpus().length;
-if (cluster_1.default.isPrimary) {
+if ( /*cluster.isPrimary*/false) {
     console.log(`totalCpus: ${totalCpus}`);
     for (let i = 0; i < totalCpus; i++) {
         cluster_1.default.fork();
