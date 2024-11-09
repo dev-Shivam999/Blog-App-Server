@@ -28,10 +28,9 @@ const Chat = async (req, res) => {
                     { ReciveFrom: Number(auth), SendTo: Number(val) },
                 ]
             },
-            select: { content: true },
+            select: { SendTo: true, content: true, sendTo: { select: { img: true, name: true } }, reciveFrom: { select: { img: true, name: true } } },
             orderBy: { content: { _count: "asc" } }
         });
-        console.log(data);
         if (!data) {
             const newChat = await __1.client.chat.create({
                 data: {
@@ -41,7 +40,7 @@ const Chat = async (req, res) => {
             });
             return res.json({ success: true, message: newChat });
         }
-        return res.json({ success: true, message: data });
+        return res.json({ success: true, message: data.content, sendTo: data.SendTo != Number(auth) ? data.sendTo : data.reciveFrom });
     }
     catch (error) {
         console.log(error);

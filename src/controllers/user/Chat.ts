@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import RedisApi from "../../utils/redis/redis";
 import { client } from "../..";
+import { send } from "process";
 
 export const Chat = async (req: Request, res: Response) => {
   const val = req.header("Authorization");
@@ -29,10 +30,9 @@ export const Chat = async (req: Request, res: Response) => {
           { ReciveFrom: Number(auth), SendTo: Number(val) },
         ]
       },
-      select: { content: true },
+      select: { SendTo:true, content: true, sendTo: { select: { img: true, name: true } }, reciveFrom:{select:{img:true,name:true}}},
       orderBy: { content: { _count: "asc" } }
     });
-    console.log(data);
 
     if (!data) {
       const newChat = await client.chat.create({
@@ -45,7 +45,7 @@ export const Chat = async (req: Request, res: Response) => {
       return res.json({ success: true, message: newChat });
     }
 
-    return res.json({ success: true, message: data });
+    return res.json({ success: true, message: data.content, sendTo: data.SendTo != Number(auth)?data.sendTo:data.reciveFrom });
 
   } catch (error) {
     console.log(error);

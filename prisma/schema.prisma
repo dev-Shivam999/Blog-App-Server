@@ -20,7 +20,7 @@ model Bloger {
   Save      Save[]
   sendChat Chat[] @relation("SendChat")
   reciveChat Chat[] @relation("ReciveChat")
-  // Messages Messages[] @relation("ChatRoom")
+    // Messages Messages[] @relation("ChatRoom")
 } 
 
 
@@ -39,7 +39,7 @@ model Chat {
   content      ChatDetails[]  @relation("ChatDetails")
   ReciveFrom Int
   reciveFrom Bloger @relation("ReciveChat",fields: [ReciveFrom], references:[id], onDelete: Cascade)
-  // messageId    Int
+ // messageId    Int
   // messages     Messages @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 model ChatDetails{
@@ -47,6 +47,7 @@ model ChatDetails{
   content String
   sendTo String
   GetTo String
+  CreateAt String 
   ChatId String
   chatId  Chat @relation("ChatDetails",fields: [ChatId], references:[id], onDelete: Cascade)
 

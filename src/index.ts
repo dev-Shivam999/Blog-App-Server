@@ -89,7 +89,7 @@ if (/*cluster.isPrimary*/ false) {
                 if (targetClient) {
 
                     if (targetClient.ws.readyState === WebSocket.OPEN) {
-                        targetClient.ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+                        targetClient.ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: data.SendTo ,Time:new Date().toLocaleTimeString()}));
 
 
                     }
@@ -104,7 +104,7 @@ if (/*cluster.isPrimary*/ false) {
                     ws.send(JSON.stringify({ event: "notFount", }))
 
                 }
-                ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: data.SendTo }));
+                ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: ws.userId, getTo: data.SendTo ,Time:new Date().toLocaleTimeString()}));
                    
                 if (data.event == "chat") {
                        
@@ -123,7 +123,7 @@ if (/*cluster.isPrimary*/ false) {
 
                      if (chatRecord?.id) {
                          await client.chatDetails.create({
-                             data: {content:data.message,sendTo:data.id,GetTo:ws.userId, ChatId:chatRecord.id }
+                             data: { content: data.message, sendTo: data.id, GetTo: ws.userId, ChatId: chatRecord.id, CreateAt: new Date().toLocaleTimeString() }
                          });
                      }
                  } catch (error) {
