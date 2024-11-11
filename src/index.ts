@@ -89,7 +89,7 @@ if (/*cluster.isPrimary*/ false) {
                 if (targetClient) {
 
                     if (targetClient.ws.readyState === WebSocket.OPEN) {
-                        targetClient.ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: data.id , getTo: ws.userId,Time:new Date().toLocaleTimeString()}));
+                        targetClient.ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: data.id, getTo: ws.userId, Time: new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })}));
 
 
                     }
@@ -104,7 +104,7 @@ if (/*cluster.isPrimary*/ false) {
                     ws.send(JSON.stringify({ event: "notFount", }))
 
                 }
-                ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: data.id, getTo:ws.userId ,Time:new Date().toLocaleTimeString()}));
+                ws.send(JSON.stringify({ event: "message", content: data.message, sendTo: data.id, getTo: ws.userId, Time: new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })}));
                    
                 if (data.event == "chat") {
                        
@@ -123,7 +123,7 @@ if (/*cluster.isPrimary*/ false) {
 
                      if (chatRecord?.id) {
                          await client.chatDetails.create({
-                             data: { content: data.message, sendTo: data.id, GetTo: ws.userId, ChatId: chatRecord.id, CreateAt: new Date().toLocaleTimeString() }
+                             data: { content: data.message, sendTo: data.id, GetTo: ws.userId, ChatId: chatRecord.id, CreateAt: new Date().toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" }) }
                          });
                      }
                  } catch (error) {
