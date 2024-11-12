@@ -54,7 +54,7 @@ export const All = async (req: Request, res: Response) => {
     }
 
     const users = await client.bloger.findMany({
-      select: { id: true, img: true },
+      select: { id: true, name:true, img: true },
     });
 
     await RedisApi.set("User", JSON.stringify(users));  

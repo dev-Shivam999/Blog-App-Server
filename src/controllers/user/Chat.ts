@@ -8,11 +8,7 @@ export const Chat = async (req: Request, res: Response) => {
   const auth = req.header("Lol");
 
   try {
-    let user = await RedisApi.get(`chat${val}:${auth}`);
-    if (user) {
-      user = await JSON.parse(user);
-      return res.json({ success: true, message: user });
-    }
+   
 
     const sender = await client.bloger.findUnique({ where: { id: Number(val) } });
     const receiver = await client.bloger.findUnique({ where: { id: Number(auth) } });
@@ -40,10 +36,11 @@ export const Chat = async (req: Request, res: Response) => {
 
         ReciveFrom: Number(val),
           SendTo: Number(auth),
-        }
+        }, select: { SendTo: true, content: true, sendTo: { select: { img: true, name: true } }, reciveFrom: { select: { img: true, name: true } } },
+       
       });
-      return res.json({ success: true, message: newChat });
-    }
+      return res.json({ success: true, message: newChat.content, sendTo: newChat.SendTo != Number(auth) ? newChat.sendTo : newChat.reciveFrom });
+ }
 
     return res.json({ success: true, message: data.content, sendTo: data.SendTo != Number(auth)?data.sendTo:data.reciveFrom });
 

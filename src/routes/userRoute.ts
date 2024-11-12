@@ -13,6 +13,8 @@ import { BlogDelete } from '../controllers/blog/BlogDelete';
 import { LikeCount } from '../controllers/blog/Like';
 import { EditsProfile } from '../controllers/user/EditsProfile';
 import { Chat } from '../controllers/user/Chat';
+import { Message } from '../controllers/user/Message';
+import { UserSearch } from '../controllers/user/UserSearch';
 
 export const routes:Router=express.Router()
 
@@ -55,3 +57,5 @@ routes.post('/follow',Follow)
 routes.post('/BlogDelete', BlogDelete)
 routes.post('/Link', LikeCount)
 routes.post('/Chat', Chat)
+routes.post('/ChatRoom', Message)
+routes.put('/UserSearch/:id', UserSearch)
