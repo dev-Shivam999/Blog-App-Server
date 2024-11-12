@@ -25,8 +25,13 @@ export const Message = async (req: Request, res: Response) => {
                 select: {
                     img: true, name: true,
                 }
+            },
+         _count:{
+            select:{
+                content:true
             }
-        }
+         }  
+        }  
 
     })
     
