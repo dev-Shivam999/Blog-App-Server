@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -b",
+    "start": "npx prisma migrate dev --init && npx prisma generate",
     "dev": "docker run -d  -e POSTGRES_PASSWORD=mysecretword -v blog:/var/lib/postgresql/data -p 5432:5432 postgres && docker run -d -p 6379:6379 redis && npx prisma generate && tsc -w"
   },
   "keywords": [],
