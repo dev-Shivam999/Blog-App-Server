@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "ChatDetails" ALTER COLUMN "CreateAt" DROP DEFAULT,
+ALTER COLUMN "CreateAt" SET DATA TYPE TEXT;
