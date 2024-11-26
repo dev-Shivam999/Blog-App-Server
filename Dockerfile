@@ -1,3 +1,4 @@
+# EXPRESS TYPESCRIPT PRISMA
 FROM node:20
 
 
@@ -6,7 +7,7 @@ WORKDIR /app/user
 
 COPY tsconfig.json ./
 COPY package*.json ./
-COPY prisma ./prisma/
+COPY prisma ./
 
 
 RUN npm install
@@ -25,3 +26,6 @@ EXPOSE 3000
 
 
 CMD ["node", "dist/index.js"]
+
+
+
